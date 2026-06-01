@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: yume
+    runtime: node
+    # a paid plan is required for a persistent disk (the dream journal must survive deploys)
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: npx next start -p ${PORT:-10000}
+    healthCheckPath: /
+    autoDeploy: true
+    disk:
+      name: yume-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      # journal persists here (the mounted disk)
+      - key: DATA_DIR
+        value: /data
+      # one aihubmix key covers chat (DeepSeek/Gemini/…) + image gen; set in dashboard
+      - key: AIHUBMIX_API_KEY
+        sync: false
+      - key: AIHUBMIX_BASE_URL
+        value: https://aihubmix.com/v1
+      - key: YUME_MODEL
+        value: deepseek-chat
+      - key: YUME_MODEL_FALLBACK
+        sync: false
+      # admin console password (X-Admin-Code) — set in dashboard
+      - key: YUME_ADMIN_CODE
+        sync: false
+      # "0" = open beta (no invite needed); set "1" to require invite codes
+      - key: YUME_REQUIRE_INVITE
+        value: "0"
+      # image-gen model for P5 (via aihubmix), set when wiring 凝象
+      - key: YUME_IMAGE_MODEL
+        sync: false

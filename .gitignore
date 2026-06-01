@@ -1,0 +1,11 @@
+/node_modules
+/.next
+/out
+/build
+*.tsbuildinfo
+# runtime data store (users/dreams/sessions) — never commit
+/data
+.env
+.env.local
+.env*.local
+.DS_Store

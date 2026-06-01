@@ -1,0 +1,345 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────
+   yume · 阈 — design tokens (see docs/tone.md)
+   夜(night) · 墨(ink) · 月(moon) · 金(gold) · 雾(mist)
+   ───────────────────────────────────────────────────────── */
+:root {
+  --night-0: #0b0a12;
+  --night-1: #12101d;
+  --night-2: #1a1730;
+  --ink: #07060c;
+  --moon: #b3a6ef;
+  --moon-soft: #6f659e;
+  --gold: #c9ae74;
+  --mist: #d9d3ec;
+  --muted: #8d85ad;
+  --border: #272340;
+  --border-soft: #1f1b33;
+
+  /* the five who gather */
+  --lens-freud: #c98a4b;
+  --lens-jung: #6f8fd8;
+  --lens-zhougong: #c95c63;
+  --lens-divination: #6cb495;
+  --lens-referee: #9aa0b8;
+
+  --foreground: var(--mist);
+  --background: var(--night-0);
+  --accent: var(--moon);
+  --accent-soft: var(--moon-soft);
+  --element: var(--moon); /* today's 五行/element tint, set at runtime */
+
+  --ease-dream: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --font-serif: "Songti SC", "STSong", "SimSun", "Noto Serif SC", "Source Han Serif SC",
+    Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--night-0);
+  font-family: var(--font-serif);
+  letter-spacing: 0.01em;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(179, 166, 239, 0.28);
+}
+
+/* quiet, wide headings */
+h1,
+h2,
+h3 {
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+a {
+  transition: color 0.4s var(--ease-dream);
+}
+
+/* ── keyframes ─────────────────────────────────────────── */
+@keyframes yume-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes yume-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+    text-shadow: 0 0 18px rgba(179, 166, 239, 0.25);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 30px rgba(179, 166, 239, 0.55);
+  }
+}
+@keyframes yume-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-3%, -2%, 0);
+  }
+}
+@keyframes yume-twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes yume-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes yume-spin-rev {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+/* the plunge: the surface you stand on rushes up past you and dissolves */
+@keyframes yume-plunge {
+  from {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.5);
+    filter: blur(20px);
+  }
+}
+@keyframes yume-blackout {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.94;
+  }
+}
+/* you land — the depths surface from below, out of the dark */
+@keyframes yume-surface {
+  0% {
+    opacity: 0;
+    transform: translateY(64px) scale(1.12);
+    filter: blur(14px);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+.yume-plunge {
+  animation: yume-plunge 0.66s cubic-bezier(0.55, 0, 0.85, 0.25) forwards;
+}
+.yume-blackout {
+  animation: yume-blackout 0.66s cubic-bezier(0.55, 0, 0.85, 0.25) forwards;
+}
+.yume-surface {
+  animation: yume-surface 1.15s var(--ease-dream) both;
+}
+
+/* hide scrollbars everywhere — keep the dreamscape full-bleed; scroll still works */
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* ── utilities ─────────────────────────────────────────── */
+.veil {
+  animation: yume-fade-up 1s var(--ease-dream) both;
+}
+.veil-2 {
+  animation: yume-fade-up 1s var(--ease-dream) 0.18s both;
+}
+.veil-3 {
+  animation: yume-fade-up 1s var(--ease-dream) 0.36s both;
+}
+.veil-4 {
+  animation: yume-fade-up 1s var(--ease-dream) 0.54s both;
+}
+
+.glow {
+  animation: yume-breathe 7s ease-in-out infinite;
+}
+
+/* element text — a faint breathing halo in the day's color (currentColor) */
+@keyframes yume-elem-text {
+  0%, 100% { text-shadow: 0 0 7px currentColor; }
+  50% { text-shadow: 0 0 15px currentColor; }
+}
+.elem-glow {
+  animation: yume-elem-text 6s ease-in-out infinite;
+}
+
+/* element glyph orb — embossed + breathing colored glow (set --g to the element color) */
+@keyframes yume-elem-orb {
+  0%, 100% { filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.18)) drop-shadow(0 0 4px var(--g, var(--element))); }
+  50% { filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.22)) drop-shadow(0 0 13px var(--g, var(--element))); }
+}
+.elem-orb {
+  animation: yume-elem-orb 5.5s ease-in-out infinite;
+}
+
+.surface {
+  background: linear-gradient(160deg, rgba(26, 23, 48, 0.66), rgba(18, 16, 29, 0.66));
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 12px 40px -24px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(179, 166, 239, 0.05);
+}
+
+/* a thin ink stroke, fades at both ends */
+.ink-rule {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(179, 166, 239, 0.35),
+    rgba(201, 174, 116, 0.25),
+    transparent
+  );
+}
+
+/* dim/uppercase ritual phase label (入夜 · 凝象 …) */
+.phase-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.5em;
+  text-transform: none;
+  color: var(--muted);
+}
+
+/* the five lenses — left stroke + faint matching glow */
+.lens-freud {
+  border-left: 2px solid var(--lens-freud);
+  box-shadow: -10px 0 30px -22px var(--lens-freud);
+  padding-left: 1rem;
+}
+.lens-jung {
+  border-left: 2px solid var(--lens-jung);
+  box-shadow: -10px 0 30px -22px var(--lens-jung);
+  padding-left: 1rem;
+}
+.lens-zhougong {
+  border-left: 2px solid var(--lens-zhougong);
+  box-shadow: -10px 0 30px -22px var(--lens-zhougong);
+  padding-left: 1rem;
+}
+.lens-divination {
+  border-left: 2px solid var(--lens-divination);
+  box-shadow: -10px 0 30px -22px var(--lens-divination);
+  padding-left: 1rem;
+}
+.lens-referee {
+  border-left: 2px solid var(--lens-referee);
+  padding-left: 1rem;
+}
+
+/* a small luminous sigil/dot */
+.sigil {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--moon);
+  box-shadow: 0 0 12px 2px rgba(179, 166, 239, 0.6);
+}
+
+.btn-moon {
+  background: linear-gradient(180deg, var(--moon), #9a8ad6);
+  color: #14121f;
+  border-radius: 9999px;
+  padding: 0.65rem 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  transition: box-shadow 0.5s var(--ease-dream), transform 0.4s var(--ease-dream);
+  box-shadow: 0 0 0 0 rgba(179, 166, 239, 0);
+}
+.btn-moon:hover {
+  box-shadow: 0 0 34px -6px rgba(179, 166, 239, 0.7);
+  transform: translateY(-1px);
+}
+.btn-veil {
+  border: 1px solid var(--border);
+  border-radius: 9999px;
+  padding: 0.65rem 1.4rem;
+  letter-spacing: 0.06em;
+  color: var(--mist);
+  transition: border-color 0.5s var(--ease-dream), color 0.5s var(--ease-dream);
+}
+.btn-veil:hover {
+  border-color: var(--moon-soft);
+  color: var(--moon);
+}
+
+input,
+textarea {
+  font-family: var(--font-serif);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow,
+  .veil,
+  .veil-2,
+  .veil-3,
+  .veil-4,
+  .yume-rotor,
+  .yume-plunge,
+  .yume-blackout,
+  .yume-surface,
+  .elem-glow,
+  .elem-orb {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* slow astrolabe rotation for the almanac background */
+.yume-rotor {
+  transform-origin: center;
+  animation: yume-spin 240s linear infinite;
+}
+.yume-rotor-rev {
+  transform-origin: center;
+  animation: yume-spin-rev 360s linear infinite;
+}
