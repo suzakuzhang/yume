@@ -234,7 +234,10 @@ export default function DreamDetailPage() {
           <Advance>
             <p className="phase-label">{arc[2]} · {tt.voicesLabel}</p>
             {busy && !debate ? (
-              <p className="text-[var(--muted)] animate-pulse">{tt.summoning}</p>
+              <>
+                <ImageProgress wuxing={elemKey} color={elemColor} />
+                <p className="text-[var(--muted)] text-xs tracking-[0.3em] animate-pulse">{tt.summoning}</p>
+              </>
             ) : debate ? (
               <div className="space-y-2 max-w-lg w-full">
                 {debate.views.map((v: any) => (

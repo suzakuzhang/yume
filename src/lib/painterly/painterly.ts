@@ -11,11 +11,11 @@ type Locale = "zh" | "en";
 const BRUSH_ZH = "皴擦点染、干笔与湿笔、浓淡相破、三远（高远·深远·平远）、开合虚实，留白以养气";
 
 function composeStatic(imagery: string[], element: string, locale: Locale): string {
-  const im = imagery.join(locale === "zh" ? "、" : ", ");
+  const im = imagery.join(locale === "zh" ? "、" : " · ");
   if (locale === "en") {
-    return `In ink the night takes shape: ${im}. Dry brush against wet, dense strokes broken by pale ones, vast empty space left to breathe. The day's note (${element}) tints the whole field, indigo and faint gold.`;
+    return `${im} — ink, and the rest left blank.`;
   }
-  return `以水墨写今夜之象：${im}。焦墨破之，淡墨晕之，干湿相生；三远开合，大片留白以养气。今日之气（${element}）浸染其间，靛蓝里透出微金。`;
+  return `${im}，其余皆留白。`;
 }
 
 export interface Painterly {
@@ -33,10 +33,10 @@ export async function imageryToPainterly(opts: {
     return { prose: composeStatic(opts.imagery, opts.element, opts.locale), source: "static" };
   }
   const langNote = opts.locale === "zh" ? "用中文。" : "Respond in English.";
-  const sys = `你是一位中国古代文人画家。把用户给的梦境意象，用笔墨与留白的语言反向"显影"成一幅画的描述——不是作画指令，而是观画般的散文。可用术语：${BRUSH_ZH}。${langNote} 150-280字，沉静、有气韵。`;
+  const sys = `你是一位惜墨如金的文人画家。把梦境意象凝成一句题画诗般的短语——越少字越有共鸣。可借笔墨留白之意（${BRUSH_ZH}），但只取一笔。${langNote} 不超过 16 字（英文不超过 12 词），一行，留白其余。不加引号、不解释。`;
   const usr = `意象：${opts.imagery.join("、")}\n${opts.dreamText ? `梦境：${opts.dreamText}\n` : ""}今日之气：${opts.element}`;
   try {
-    const prose = await callLLM(sys, usr, { temperature: 0.85, maxTokens: 600 });
+    const prose = await callLLM(sys, usr, { temperature: 0.85, maxTokens: 80 });
     return { prose, source: "llm" };
   } catch {
     return { prose: composeStatic(opts.imagery, opts.element, opts.locale), source: "static" };

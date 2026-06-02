@@ -10,6 +10,8 @@ import { ElementGlyph } from "@/components/ElementGlyph";
  */
 export interface CompassGaze {
   name: string;
+  line?: string;
+  quote?: string;
 }
 
 const META = [
@@ -34,6 +36,7 @@ export function GazeCompass({
   const [rot, setRot] = useState(0);
   const [active, setActive] = useState(-1);
   const [spinning, setSpinning] = useState(false);
+  const [reveal, setReveal] = useState(false);
   const R = 38;
 
   function spin() {
@@ -44,7 +47,36 @@ export function GazeCompass({
     const base = rot - (rot % 360);
     setRot(base + 360 * 4 + ANGLES[target]);
     window.setTimeout(() => setActive(target), 1300);
-    window.setTimeout(() => onEnter(), 1750);
+    // mobile hides the inline caption — show a dedicated reveal page; desktop just enters.
+    const mobile = typeof window !== "undefined" && window.matchMedia?.("(max-width: 639px)").matches;
+    if (mobile) {
+      window.setTimeout(() => setReveal(true), 1450);
+    } else {
+      window.setTimeout(() => onEnter(), 1750);
+    }
+  }
+
+  // mobile: the drawn gaze, revealed full-screen with its caption, then 入梦.
+  if (reveal && active >= 0) {
+    const gz = gazes[active];
+    const m = META[active];
+    const c = `var(${m.color})`;
+    return (
+      <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-6 px-8 text-center yume-surface">
+        <Avatar meta={m} color={c} size={84} />
+        <span className="text-xl tracking-[0.2em]" style={{ color: c }}>{gz.name}</span>
+        {gz.line && <p className="text-base leading-relaxed max-w-xs text-[var(--mist)]">{gz.line}</p>}
+        {gz.quote && <p className="text-sm leading-relaxed max-w-xs text-[var(--muted)]">{gz.quote}</p>}
+        <button
+          onClick={onEnter}
+          aria-label="入梦"
+          className="elem-orb mt-4 inline-flex items-center justify-center rounded-full transition-transform duration-500 hover:scale-110"
+          style={{ ["--g" as string]: elementColor, width: 72, height: 72, border: `1px solid ${elementColor}` } as React.CSSProperties}
+        >
+          <ElementGlyph wuxing={elementKey} color={elementColor} size={40} />
+        </button>
+      </div>
+    );
   }
 
   return (
