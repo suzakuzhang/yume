@@ -13,7 +13,7 @@ export type Locale = "zh" | "en";
 const zh = {
   brand: "夢",
   langOther: "EN",
-  nav: { today: "入夜", timeline: "夢之时间线", signin: "登录 / 注册", signout: "退出" },
+  nav: { today: "入夜", timeline: "溯梦", signin: "进入", signout: "退出" },
   foot: "墨 · 星 · 渊 · 入梦之阈",
 
   home: {
@@ -102,6 +102,18 @@ const zh = {
     noAccount: "还没有账号？",
     toRegister: "用邀请码注册",
   },
+  entry: {
+    label: "入梦之阈",
+    title: "进入",
+    invite: "邀请码",
+    invitePh: "管理员发给你的码",
+    id: "你的 ID",
+    idPh: "英文 + 数字，18 位以内",
+    idError: "ID 只能是英文和数字，且不超过 18 位",
+    submit: "进入",
+    submitting: "正在入梦…",
+    betaNote: "公测中 · 邀请码可留空。用同一个 ID 即可找回你的梦。",
+  },
   register: {
     label: "以邀请码入阈",
     title: "取一个名，许一段口令",
@@ -121,7 +133,7 @@ const zh = {
   },
   journal: {
     loading: "正在入梦…",
-    label: "夢之时间线",
+    label: "溯梦",
     title: "你走过的梦",
     mustLoginPre: "请先",
     mustLoginLink: "登入",
@@ -197,7 +209,7 @@ const zh = {
 const en = {
   brand: "夢",
   langOther: "中",
-  nav: { today: "Nightfall", timeline: "Dream Timeline", signin: "Sign in / Register", signout: "Sign out" },
+  nav: { today: "Nightfall", timeline: "Retrace", signin: "Enter", signout: "Sign out" },
   foot: "Ink · Star · Depths · the threshold of dreaming",
 
   home: {
@@ -293,6 +305,18 @@ const en = {
     noAccount: "No account yet?",
     toRegister: "Register with an invite",
   },
+  entry: {
+    label: "the threshold of dreaming",
+    title: "Enter",
+    invite: "Invite code",
+    invitePh: "the code an admin gave you",
+    id: "Your ID",
+    idPh: "letters + digits, up to 18",
+    idError: "ID must be letters and digits, up to 18 characters",
+    submit: "Enter",
+    submitting: "drifting in…",
+    betaNote: "Open beta · invite optional. Use the same ID to find your dreams again.",
+  },
   register: {
     label: "enter by invitation",
     title: "Take a name, set a passphrase",
@@ -312,7 +336,7 @@ const en = {
   },
   journal: {
     loading: "drifting in…",
-    label: "Dream Timeline",
+    label: "Retrace",
     title: "The dreams you have walked",
     mustLoginPre: "Please",
     mustLoginLink: "sign in",

@@ -1,24 +1,108 @@
 "use client";
 
 import { useState } from "react";
+import { ElementGlyph } from "@/components/ElementGlyph";
 
 /**
- * 罗盘 — the four gazes around a ring. Hover a mark and the needle swings to it;
- * the centre reveals that gaze's portrait, a line of description, and a quote.
- * Consolidates the old "gazes" + "mirror" panels.
+ * 罗盘 — four gazes around a ring; the centre is the day's element. Tap the
+ * centre: the needle spins and lands on a random gaze, then 入梦 (onEnter).
+ * Minimal — just the compass + element, no text block.
  */
 export interface CompassGaze {
   name: string;
-  line: string;
-  quote: string;
 }
 
-const META: { color: string; portrait: string; shape: "" | "taiji" | "butterfly" }[] = [
-  { color: "--lens-freud", portrait: "/portraits/freud.jpg", shape: "" },
-  { color: "--lens-jung", portrait: "/portraits/jung.jpg", shape: "" },
-  { color: "--lens-zhougong", portrait: "", shape: "taiji" }, // 术数 — taiji (root of 易象数)
-  { color: "--gold", portrait: "", shape: "butterfly" }, // 道家 — 庄周梦蝶
+const META = [
+  { color: "--lens-freud", portrait: "/portraits/freud.jpg", shape: "" as const },
+  { color: "--lens-jung", portrait: "/portraits/jung.jpg", shape: "" as const },
+  { color: "--lens-zhougong", portrait: "", shape: "taiji" as const }, // 术数
+  { color: "--gold", portrait: "", shape: "butterfly" as const }, // 道家
 ];
+const ANGLES = [0, 90, 180, 270];
+
+export function GazeCompass({
+  gazes,
+  elementKey,
+  elementColor,
+  onEnter,
+}: {
+  gazes: CompassGaze[];
+  elementKey?: string;
+  elementColor: string;
+  onEnter: () => void;
+}) {
+  const [rot, setRot] = useState(0);
+  const [active, setActive] = useState(-1);
+  const [spinning, setSpinning] = useState(false);
+  const R = 38;
+
+  function spin() {
+    if (spinning) return;
+    setSpinning(true);
+    setActive(-1);
+    const target = Math.floor(Math.random() * gazes.length);
+    const base = rot - (rot % 360);
+    setRot(base + 360 * 4 + ANGLES[target]);
+    window.setTimeout(() => setActive(target), 1300);
+    window.setTimeout(() => onEnter(), 1750);
+  }
+
+  return (
+    <div className="relative" style={{ width: "min(80vw, 62vh, 460px)", height: "min(80vw, 62vh, 460px)" }}>
+      {/* rings */}
+      <div className="absolute inset-[6%] rounded-full" style={{ border: "1px solid var(--border)" }} />
+      <div className="absolute inset-[22%] rounded-full" style={{ border: "1px solid var(--border-soft)" }} />
+
+      {/* needle */}
+      <div
+        className="absolute"
+        style={{
+          left: "calc(50% - 1px)",
+          top: "8%",
+          width: 2,
+          height: "42%",
+          transformOrigin: "bottom center",
+          transform: `rotate(${rot}deg)`,
+          background: `linear-gradient(to top, transparent, ${elementColor})`,
+          transition: "transform 1.5s cubic-bezier(0.18,0.7,0.2,1)",
+        }}
+      />
+
+      {/* the four gazes */}
+      {gazes.map((gz, i) => {
+        const rad = ((ANGLES[i] - 90) * Math.PI) / 180;
+        const x = 50 + R * Math.cos(rad);
+        const y = 50 + R * Math.sin(rad);
+        const on = i === active;
+        return (
+          <div
+            key={i}
+            className="absolute flex flex-col items-center gap-1 -translate-x-1/2 -translate-y-1/2 transition-all duration-500"
+            style={{ left: `${x}%`, top: `${y}%`, transform: `translate(-50%,-50%) scale(${on ? 1.2 : 1})`, opacity: active < 0 || on ? 1 : 0.55 }}
+          >
+            <Avatar meta={META[i]} color={`var(${META[i].color})`} size={on ? 58 : 50} />
+            <span className="hidden sm:block text-xs tracking-[0.15em]" style={{ color: on ? `var(${META[i].color})` : "var(--muted)" }}>
+              {gz.name}
+            </span>
+          </div>
+        );
+      })}
+
+      {/* centre — the day's element; tap to spin & enter */}
+      <button
+        onClick={spin}
+        aria-label="入梦"
+        disabled={spinning}
+        className="elem-orb absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-500 hover:scale-105"
+        style={{ ["--g" as string]: elementColor } as React.CSSProperties}
+      >
+        <span className="inline-flex items-center justify-center rounded-full" style={{ width: 96, height: 96, border: `1px solid ${elementColor}`, background: "radial-gradient(circle, color-mix(in srgb, var(--night-2) 85%, transparent), transparent)" }}>
+          <ElementGlyph wuxing={elementKey} color={elementColor} size={56} />
+        </span>
+      </button>
+    </div>
+  );
+}
 
 function Taiji({ size, color }: { size: number; color: string }) {
   return (
@@ -41,92 +125,12 @@ function Butterfly({ size, color }: { size: number; color: string }) {
     </svg>
   );
 }
-const ANGLES = [0, 90, 180, 270]; // top, right, bottom, left (clockwise from top)
 
-export function GazeCompass({ gazes }: { gazes: CompassGaze[] }) {
-  const [active, setActive] = useState(0);
-  const R = 38; // ring radius as % of half-size
-  const g = gazes[active];
-  const m = META[active];
-  const aColor = `var(${m.color})`;
-
-  return (
-    <div className="flex flex-col items-center gap-6">
-      <div className="relative" style={{ width: "min(64vh, 88vw)", height: "min(64vh, 88vw)", maxWidth: 480, maxHeight: 480 }}>
-        {/* ring */}
-        <div className="absolute inset-[8%] rounded-full" style={{ border: "1px solid var(--border)" }} />
-        <div className="absolute inset-[20%] rounded-full" style={{ border: "1px solid var(--border-soft)" }} />
-
-        {/* needle — swings to the active mark (base anchored at compass centre) */}
-        <div
-          className="absolute"
-          style={{
-            left: "calc(50% - 1px)",
-            top: "8%",
-            width: 2,
-            height: "42%",
-            transformOrigin: "bottom center",
-            transform: `rotate(${ANGLES[active]}deg)`,
-            background: `linear-gradient(to top, transparent, ${aColor})`,
-            transition: "transform 0.7s cubic-bezier(0.22,0.61,0.36,1)",
-          }}
-        />
-
-        {/* centre reveal */}
-        <div className="absolute inset-[26%] rounded-full flex flex-col items-center justify-center text-center px-3 gap-2"
-             style={{ background: `radial-gradient(circle, color-mix(in srgb, ${aColor} 10%, transparent), transparent 75%)` }}>
-          <span key={active} className="yume-surface flex flex-col items-center gap-2">
-            <Avatar meta={m} color={aColor} size={56} />
-            <p className="text-base" style={{ color: aColor }}>{g.name}</p>
-          </span>
-        </div>
-
-        {/* the four marks */}
-        {gazes.map((gz, i) => {
-          const rad = ((ANGLES[i] - 90) * Math.PI) / 180;
-          const x = 50 + R * Math.cos(rad);
-          const y = 50 + R * Math.sin(rad);
-          const on = i === active;
-          return (
-            <button
-              key={i}
-              onMouseEnter={() => setActive(i)}
-              onFocus={() => setActive(i)}
-              onClick={() => setActive(i)}
-              className="elem-orb absolute -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform duration-500"
-              style={{ left: `${x}%`, top: `${y}%`, transform: `translate(-50%,-50%) scale(${on ? 1.18 : 1})`, ["--g" as string]: `var(${META[i].color})` } as React.CSSProperties}
-              aria-label={gz.name}
-            >
-              <Avatar meta={META[i]} color={`var(${META[i].color})`} size={on ? 60 : 50} dim={!on} />
-            </button>
-          );
-        })}
-      </div>
-
-      {/* line + quote for the active gaze */}
-      <div key={`t-${active}`} className="yume-surface text-center max-w-xl space-y-2 min-h-[5.5rem]">
-        <p className="text-lg md:text-xl leading-relaxed">
-          <span style={{ color: aColor }}>{g.name}</span>
-          <span className="text-[var(--mist)]">{g.line}</span>
-        </p>
-        <p className="text-[var(--muted)] italic leading-relaxed">{g.quote}</p>
-      </div>
-    </div>
-  );
-}
-
-function Avatar({ meta, color, size, dim }: { meta: (typeof META)[number]; color: string; size: number; dim?: boolean }) {
+function Avatar({ meta, color, size }: { meta: (typeof META)[number]; color: string; size: number }) {
   return (
     <span
       className="inline-flex items-center justify-center rounded-full overflow-hidden"
-      style={{
-        width: size,
-        height: size,
-        border: `1px solid ${color}`,
-        boxShadow: `0 0 ${dim ? 8 : 18}px -4px ${color}`,
-        background: `radial-gradient(circle at 50% 35%, color-mix(in srgb, ${color} 30%, transparent), transparent)`,
-        opacity: dim ? 0.6 : 1,
-      }}
+      style={{ width: size, height: size, border: `1px solid ${color}`, boxShadow: `0 0 16px -4px ${color}`, background: `radial-gradient(circle at 50% 35%, color-mix(in srgb, ${color} 28%, transparent), transparent)` }}
     >
       {meta.portrait ? (
         // eslint-disable-next-line @next/next/no-img-element

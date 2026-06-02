@@ -15,6 +15,7 @@ interface AuthState {
   capabilities: Record<string, boolean>;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string, inviteCode: string) => Promise<void>;
+  enter: (inviteCode: string, id: string) => Promise<void>;
   logout: () => Promise<void>;
   /** fetch with the access token attached. */
   authedFetch: (input: string, init?: RequestInit) => Promise<Response>;
@@ -94,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login: (username, password) => handleAuth("/api/auth/login", { username, password }),
     register: (username, password, inviteCode) =>
       handleAuth("/api/auth/register", { username, password, inviteCode }),
+    enter: (inviteCode, id) => handleAuth("/api/auth/enter", { inviteCode, id }),
     logout: async () => {
       await authedFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
       localStorage.removeItem(TOKEN_KEY);
