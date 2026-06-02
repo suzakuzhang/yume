@@ -66,6 +66,8 @@ export interface Dream {
   painterlyProse: string;
   imageUrl: string;
   elementBaseline: ElementBaseline | null;
+  /** the gaze the compass landed on today — leads 众声; "" if none drawn. */
+  leadGaze: string;
   createdAt: string;
 }
 

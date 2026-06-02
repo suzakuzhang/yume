@@ -263,6 +263,7 @@ export function createDream(opts: {
   question?: string;
   dreamText?: string;
   mood?: string;
+  leadGaze?: string;
   elementBaseline?: import("./types").ElementBaseline | null;
 }): Dream {
   const data = load();
@@ -277,6 +278,7 @@ export function createDream(opts: {
     painterlyProse: "",
     imageUrl: "",
     elementBaseline: opts.elementBaseline ?? null,
+    leadGaze: opts.leadGaze ?? "",
     createdAt: utcNow(),
   };
   data.dreams.push(dream);

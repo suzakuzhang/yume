@@ -21,6 +21,8 @@ const META = [
   { color: "--gold", portrait: "", shape: "butterfly" as const }, // 道家
 ];
 const ANGLES = [0, 90, 180, 270];
+const LENS_KEYS = ["freud", "jung", "shuxu", "daoism"]; // compass order → debate lens keys
+export const LEAD_GAZE_KEY = "yume_lead_gaze";
 
 export function GazeCompass({
   gazes,
@@ -46,6 +48,13 @@ export function GazeCompass({
     const target = Math.floor(Math.random() * gazes.length);
     const base = rot - (rot % 360);
     setRot(base + 360 * 4 + ANGLES[target]);
+    // remember the drawn gaze — it becomes today's 主线, leading 众声 later
+    try {
+      const key = LENS_KEYS[target] ?? "";
+      if (key) localStorage.setItem(LEAD_GAZE_KEY, JSON.stringify({ gaze: key, date: new Date().toISOString().slice(0, 10) }));
+    } catch {
+      /* ignore storage errors */
+    }
     window.setTimeout(() => setActive(target), 1300);
     // mobile hides the inline caption — show a dedicated reveal page; desktop just enters.
     const mobile = typeof window !== "undefined" && window.matchMedia?.("(max-width: 639px)").matches;

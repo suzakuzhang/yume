@@ -137,6 +137,13 @@ export default function DreamDetailPage() {
 
   const eb = dream.elementBaseline;
   const step = PHASES[idx];
+  // the gaze the compass drew today leads 众声; the rest follow as 备选
+  const leadGaze: string = dream.leadGaze || "";
+  const orderedViews: any[] = debate?.views
+    ? leadGaze
+      ? [...debate.views].sort((a: any, b: any) => (a.key === leadGaze ? -1 : b.key === leadGaze ? 1 : 0))
+      : debate.views
+    : [];
   const elemKey = locale === "zh" ? eb?.wuxing?.key : eb?.western?.key;
   const elemColor =
     (locale === "zh" ? WUXING[eb?.wuxing?.key ?? ""]?.color : WESTERN_ELEMENTS[eb?.western?.key ?? ""]?.color) ?? "var(--moon)";
@@ -242,12 +249,37 @@ export default function DreamDetailPage() {
               </>
             ) : debate ? (
               <div className="space-y-2 max-w-lg w-full">
-                {debate.views.map((v: any) => (
-                  <div key={v.key} className="surface p-3 text-left" style={{ borderLeft: `2px solid var(${v.colorVar})` }}>
-                    <span className="text-xs" style={{ color: `var(${v.colorVar})` }}>{locale === "zh" ? v.nameZh : v.nameEn}</span>
-                    <p className="text-[var(--mist)] text-sm leading-relaxed">{v.statement || v.stance}</p>
-                  </div>
-                ))}
+                {orderedViews.map((v: any, i: number) => {
+                  const lead = !!leadGaze && v.key === leadGaze;
+                  return (
+                    <div key={v.key}>
+                      {!!leadGaze && i === 1 && (
+                        <p className="phase-label text-left pt-2 pb-1 opacity-60">{tt.othersLabel}</p>
+                      )}
+                      <div
+                        className="surface p-3 text-left transition-all"
+                        style={{
+                          borderLeft: `2px solid var(${v.colorVar})`,
+                          ...(lead
+                            ? { boxShadow: `0 0 22px -8px var(${v.colorVar})`, background: `color-mix(in srgb, var(${v.colorVar}) 9%, transparent)` }
+                            : leadGaze
+                            ? { opacity: 0.74 }
+                            : {}),
+                        }}
+                      >
+                        <span className="text-xs flex items-center gap-2" style={{ color: `var(${v.colorVar})` }}>
+                          {locale === "zh" ? v.nameZh : v.nameEn}
+                          {lead && (
+                            <span className="px-1.5 py-0.5 rounded-full text-[10px] tracking-[0.1em]" style={{ border: `1px solid var(${v.colorVar})` }}>
+                              {tt.leadLabel}
+                            </span>
+                          )}
+                        </span>
+                        <p className="text-[var(--mist)] text-sm leading-relaxed">{v.statement || v.stance}</p>
+                      </div>
+                    </div>
+                  );
+                })}
                 {debate.note && <p className="text-xs text-[var(--muted)]">{debate.note}</p>}
               </div>
             ) : null}

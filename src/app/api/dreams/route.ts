@@ -23,6 +23,7 @@ export async function POST(req: Request) {
     dreamText?: string;
     mood?: string;
     date?: string;
+    leadGaze?: string;
     elementBaseline?: import("@/lib/store/types").ElementBaseline | null;
   };
   try {
@@ -38,6 +39,8 @@ export async function POST(req: Request) {
   if (imageryElements.length === 0) {
     return NextResponse.json({ error: "至少给出一个梦境意象" }, { status: 400 });
   }
+  const GAZES = ["freud", "jung", "shuxu", "daoism"];
+  const leadGaze = GAZES.includes(String(body.leadGaze)) ? String(body.leadGaze) : "";
 
   const dream = createDream({
     userId: ctx.user.id,
@@ -46,6 +49,7 @@ export async function POST(req: Request) {
     dreamText: body.dreamText,
     mood: body.mood,
     date: body.date,
+    leadGaze,
     elementBaseline: body.elementBaseline ?? null,
   });
   addUsageLog({

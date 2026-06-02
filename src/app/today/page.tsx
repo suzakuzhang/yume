@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { almanac } from "@/lib/almanac";
+import { LEAD_GAZE_KEY } from "@/components/GazeCompass";
 import type { ElementBaseline } from "@/lib/store/types";
 
 export default function TodayPage() {
@@ -57,9 +58,17 @@ export default function TodayPage() {
         four: a.four.cn,
         capturedAt: new Date().toISOString(),
       };
+      // today's compass draw, if any — becomes this dream's 主线
+      let leadGaze = "";
+      try {
+        const raw = localStorage.getItem(LEAD_GAZE_KEY);
+        if (raw) leadGaze = JSON.parse(raw).gaze ?? "";
+      } catch {
+        /* ignore */
+      }
       const res = await authedFetch("/api/dreams", {
         method: "POST",
-        body: JSON.stringify({ imageryElements: imagery, dreamText, question, mood, elementBaseline }),
+        body: JSON.stringify({ imageryElements: imagery, dreamText, question, mood, leadGaze, elementBaseline }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "failed");
