@@ -6,6 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ImageProgress } from "@/components/ImageProgress";
+import { SpiritChat } from "@/components/SpiritChat";
 import { WUXING, WESTERN_ELEMENTS } from "@/lib/almanac";
 
 /* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
@@ -27,6 +28,7 @@ export default function DreamDetailPage() {
   const [reduce, setReduce] = useState(false);
   const [busy, setBusy] = useState(false);
   const [imgBusy, setImgBusy] = useState(false);
+  const [chat, setChat] = useState(false);
   const imgStarted = useRef(false);
 
   const load = useCallback(() => {
@@ -270,11 +272,24 @@ export default function DreamDetailPage() {
             ) : (
               <p className="text-[var(--muted)] max-w-md leading-loose text-sm">{debate?.note ?? ""}</p>
             )}
-            <p className="pt-2"><span className="text-[var(--gold)] tracking-[0.22em] text-lg">{t.home.invocation.maxim}</span></p>
-            <a href="/journal" className="btn-veil inline-block mt-2">{tt.back}</a>
+            <button
+              onClick={() => setChat(true)}
+              className="mt-3 flex flex-col items-center gap-2 group"
+              aria-label={tt.spirit.enter}
+            >
+              <span
+                className="elem-orb inline-flex items-center justify-center rounded-full transition-transform duration-500 group-hover:scale-110"
+                style={{ ["--g" as string]: elemColor, width: 72, height: 72, border: `1px solid ${elemColor}` } as React.CSSProperties}
+              >
+                <ElementGlyph wuxing={elemKey} color={elemColor} size={40} />
+              </span>
+              <span className="text-xs tracking-[0.3em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors">{tt.spirit.enter}</span>
+            </button>
+            <a href="/journal" className="text-xs tracking-[0.3em] text-[var(--muted)] hover:text-[var(--moon)] mt-1">{tt.back}</a>
           </div>
         )}
       </div>
+      {chat && <SpiritChat dreamId={id} onClose={() => setChat(false)} />}
     </>
   );
 }

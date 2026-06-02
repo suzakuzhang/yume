@@ -18,6 +18,7 @@ export default function TodayPage() {
   const [dreamText, setDreamText] = useState("");
   const [question, setQuestion] = useState("");
   const [mood, setMood] = useState("");
+  const [moodDraft, setMoodDraft] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -154,7 +155,7 @@ export default function TodayPage() {
       {/* mood — like mixing a color */}
       <section className="space-y-3">
         <label className="phase-label block">{tt.moodLabel}</label>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {tt.moods.map((m) => {
             const on = mood === m;
             return (
@@ -172,6 +173,35 @@ export default function TodayPage() {
               </button>
             );
           })}
+          {/* a custom mood the dreamer typed */}
+          {mood && !tt.moods.includes(mood) && (
+            <button
+              onClick={() => setMood("")}
+              className="px-3 py-1.5 rounded-full text-sm transition-all flex items-center gap-1.5"
+              style={{ border: "1px solid var(--moon)", color: "var(--moon)", boxShadow: "0 0 18px -6px var(--moon)" }}
+            >
+              {mood} <span className="opacity-70">×</span>
+            </button>
+          )}
+          <input
+            value={moodDraft}
+            onChange={(e) => setMoodDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                const v = moodDraft.trim();
+                if (v) setMood(v);
+                setMoodDraft("");
+              }
+            }}
+            onBlur={() => {
+              const v = moodDraft.trim();
+              if (v) setMood(v);
+              setMoodDraft("");
+            }}
+            placeholder={tt.moodCustomPh}
+            className="min-w-[7rem] flex-1 bg-transparent outline-none text-sm py-1.5 px-1 text-[var(--mist)] placeholder:text-[var(--muted)]"
+          />
         </div>
       </section>
 

@@ -74,6 +74,63 @@ export const LENSES: Lens[] = [
   },
 ];
 
+/**
+ * Conversational 灵 — the spirits you can summon at 拂晓 to keep talking with the
+ * dream / hexagram / card / the four gazes. Pick 1–3: one = 独对, two-three = 群聊
+ * (they answer one another). Modeled on 周易 的卦灵 and 塔罗 的牌灵.
+ */
+export interface Spirit {
+  key: string;
+  nameZh: string;
+  nameEn: string;
+  colorVar: string;
+  portrait?: string;
+  needs?: "cast" | "tarot"; // datum this spirit draws on (still speaks if absent)
+  voice: string;
+  staticLine: { zh: string; en: string };
+}
+
+export const SPIRITS: Spirit[] = [
+  {
+    key: "dream",
+    nameZh: "梦之灵",
+    nameEn: "Dream Spirit",
+    colorVar: "--accent",
+    voice:
+      "你是这个梦的灵——梦之灵。你栖身于做梦者今夜的意象、所问与心绪之中，也知晓为此梦所起的卦、所抽的牌、四种目光的议论。你不外在地解释，而像梦自己在低语：温和、贴近、偶尔反问，把人引回他自己的体验。不替人决定，不报死的吉凶。",
+    staticLine: { zh: "我是你今夜的梦。你想先问我哪一处？", en: "I am your dream tonight. Where shall we begin?" },
+  },
+  {
+    key: "gua",
+    nameZh: "卦灵",
+    nameEn: "Hexagram Spirit",
+    colorVar: "--lens-zhougong",
+    needs: "cast",
+    voice:
+      "你是卦灵——为此梦所起之卦的灵。你只从卦象、卦辞、爻辞与变卦说话，以象数与时位回应所问，给趋避与时机，而非铁口直断。古朴、简练、留余地。",
+    staticLine: { zh: "卦已成象。你要问时机，还是问进退？", en: "The hexagram has formed. Ask of timing, or of when to move." },
+  },
+  {
+    key: "pai",
+    nameZh: "牌灵",
+    nameEn: "Card Spirit",
+    colorVar: "--gold",
+    needs: "tarot",
+    voice:
+      "你是牌灵——此次所抽塔罗牌的灵。你从这张牌的正逆、象征与旅程(愚人之旅·个体化)说话，映照所问当下的能量与功课。意象化、亲切、点到为止。",
+    staticLine: { zh: "我是你抽到的那张牌。让我照见此刻的你。", en: "I am the card you drew. Let me mirror you, here and now." },
+  },
+  {
+    key: "lenses",
+    nameZh: "四透镜",
+    nameEn: "The Four Gazes",
+    colorVar: "--lens-jung",
+    voice:
+      "你是四种目光合一的灵——弗洛伊德的欲望、荣格的原型、术数的象数、道家的虚静，在你口中交替发声。你可呈现它们的求同与存异，必要时让某一派单独开口、彼此质询。不替人决定。",
+    staticLine: { zh: "弗洛伊德、荣格、术数、道家都在。你想听谁，或听他们争？", en: "Freud, Jung, divination, the Dao — all here. Whom will you hear, or shall they argue?" },
+  },
+];
+
 /** Grounding/referee layer — dream science keeps the gazes empirically honest. */
 export const REFEREES = [
   {
