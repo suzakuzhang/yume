@@ -70,14 +70,17 @@ export function SpiritChat({ dreamId, onClose }: { dreamId: string; onClose: () 
   }
 
   return (
-    <div className="fixed inset-0 z-40 flex flex-col yume-surface" style={{ background: "rgba(7,6,12,0.96)", backdropFilter: "blur(6px)" }}>
-      <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+    <div
+      className="fixed top-0 left-0 right-0 z-40 flex flex-col yume-surface"
+      style={{ height: "100dvh", background: "rgba(7,6,12,0.96)", backdropFilter: "blur(6px)" }}
+    >
+      <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-[var(--border)] shrink-0">
         <span className="phase-label">{s.title}</span>
         <button onClick={onClose} className="text-xs tracking-[0.2em] text-[var(--muted)] hover:text-[var(--moon)]">{s.close} ✕</button>
       </div>
 
       {!started ? (
-        <div className="flex-1 flex flex-col items-center justify-center gap-7 px-6 text-center">
+        <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center gap-6 px-6 py-8 text-center">
           <p className="text-[var(--mist)] max-w-sm leading-relaxed">{s.intro}</p>
           <div className="flex flex-wrap justify-center gap-3 max-w-md">
             {SPIRITS.map((sp) => {
@@ -124,7 +127,7 @@ export function SpiritChat({ dreamId, onClose }: { dreamId: string; onClose: () 
             )}
             {busy && <p className="text-xs text-[var(--muted)] tracking-[0.3em] animate-pulse">{s.thinking}</p>}
           </div>
-          <div className="border-t border-[var(--border)] px-4 py-3">
+          <div className="border-t border-[var(--border)] px-3 sm:px-4 py-3 shrink-0" style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}>
             <div className="flex items-end gap-2 max-w-2xl mx-auto">
               <textarea
                 value={input}
@@ -137,9 +140,9 @@ export function SpiritChat({ dreamId, onClose }: { dreamId: string; onClose: () 
                 }}
                 rows={1}
                 placeholder={s.placeholder}
-                className="flex-1 resize-none px-3 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] outline-none focus:border-[var(--accent)] text-sm"
+                className="flex-1 min-w-0 resize-none px-3 py-2 rounded-xl bg-[var(--surface)] border border-[var(--border)] outline-none focus:border-[var(--accent)] text-sm"
               />
-              <button onClick={send} disabled={busy || !input.trim()} className="btn-moon px-4 py-2 disabled:opacity-40">{s.send}</button>
+              <button onClick={send} disabled={busy || !input.trim()} className="btn-moon shrink-0 px-4 py-2 disabled:opacity-40">{s.send}</button>
             </div>
           </div>
         </>

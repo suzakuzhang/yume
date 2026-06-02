@@ -90,6 +90,8 @@ export interface Spirit {
   staticLine: { zh: string; en: string };
 }
 
+const lensByKey = (k: string): Lens => LENSES.find((l) => l.key === k)!;
+
 export const SPIRITS: Spirit[] = [
   {
     key: "dream",
@@ -121,13 +123,31 @@ export const SPIRITS: Spirit[] = [
     staticLine: { zh: "我是你抽到的那张牌。让我照见此刻的你。", en: "I am the card you drew. Let me mirror you, here and now." },
   },
   {
-    key: "lenses",
-    nameZh: "四透镜",
-    nameEn: "The Four Gazes",
+    key: "daoism",
+    nameZh: "道家庄子",
+    nameEn: "Zhuangzi · Dao",
+    colorVar: "--moon",
+    portrait: lensByKey("daoism").portrait,
+    voice: `${lensByKey("daoism").voice} 你以这一身份与做梦者对话，简短、疏阔。`,
+    staticLine: lensByKey("daoism").staticStance,
+  },
+  {
+    key: "freud",
+    nameZh: "弗洛伊德",
+    nameEn: "Freud",
+    colorVar: "--lens-freud",
+    portrait: lensByKey("freud").portrait,
+    voice: `${lensByKey("freud").voice} 你以这一身份与做梦者对话，简短、克制。`,
+    staticLine: lensByKey("freud").staticStance,
+  },
+  {
+    key: "jung",
+    nameZh: "荣格",
+    nameEn: "Jung",
     colorVar: "--lens-jung",
-    voice:
-      "你是四种目光合一的灵——弗洛伊德的欲望、荣格的原型、术数的象数、道家的虚静，在你口中交替发声。你可呈现它们的求同与存异，必要时让某一派单独开口、彼此质询。不替人决定。",
-    staticLine: { zh: "弗洛伊德、荣格、术数、道家都在。你想听谁，或听他们争？", en: "Freud, Jung, divination, the Dao — all here. Whom will you hear, or shall they argue?" },
+    portrait: lensByKey("jung").portrait,
+    voice: `${lensByKey("jung").voice} 你以这一身份与做梦者对话，简短、温厚。`,
+    staticLine: lensByKey("jung").staticStance,
   },
 ];
 
