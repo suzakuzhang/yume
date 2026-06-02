@@ -219,10 +219,32 @@ export default function DreamDetailPage() {
             {busy && !cast ? (
               <p className="text-[var(--muted)] animate-pulse">{tt.casting}</p>
             ) : cast ? (
-              <div className="surface p-4 max-w-lg space-y-1 lens-divination text-left">
-                <h3 className="text-lg">{cast.original.fullName}</h3>
-                <p className="text-[var(--mist)] text-sm">{cast.original.guaCi}</p>
-                {cast.changed && <p className="text-xs text-[var(--muted)]">{tt.changing} {cast.changingLines?.join("、")} → {tt.bianGua} {cast.changed.fullName}</p>}
+              <div className="surface p-4 max-w-lg lens-divination text-left flex gap-4">
+                {cast.coins && (
+                  <div className="flex flex-col-reverse gap-1.5 shrink-0 pt-1" aria-hidden>
+                    {cast.coins.map((ln: any) => (
+                      <div key={ln.position} className="flex items-center gap-1.5">
+                        <span className="flex justify-between items-center" style={{ width: 38 }}>
+                          {ln.yang ? (
+                            <span className="h-[5px] rounded-sm w-full" style={{ background: ln.changing ? "var(--gold)" : "var(--mist)" }} />
+                          ) : (
+                            <>
+                              <span className="h-[5px] rounded-sm" style={{ width: "44%", background: ln.changing ? "var(--gold)" : "var(--mist)" }} />
+                              <span className="h-[5px] rounded-sm" style={{ width: "44%", background: ln.changing ? "var(--gold)" : "var(--mist)" }} />
+                            </>
+                          )}
+                        </span>
+                        {ln.changing && <span className="text-[9px] text-[var(--gold)] leading-none">○</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <h3 className="text-lg">{cast.original.fullName}</h3>
+                  <p className="text-[var(--mist)] text-sm">{cast.original.guaCi}</p>
+                  {cast.changed && <p className="text-xs text-[var(--muted)]">{tt.changing} {cast.changingLines?.join("、")} → {tt.bianGua} {cast.changed.fullName}</p>}
+                  {cast.coins && <p className="text-[10px] text-[var(--muted)] tracking-[0.2em] pt-1">{tt.coinNote}</p>}
+                </div>
               </div>
             ) : null}
             {tarot && (
@@ -290,19 +312,8 @@ export default function DreamDetailPage() {
         {step === "dawn" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6 text-center overflow-y-auto py-12">
             <p className="phase-label">{arc[4]}</p>
-            {debate?.synthesis ? (
-              <div className="surface p-5 max-w-lg space-y-2 text-left" style={{ borderLeft: "2px solid var(--gold)" }}>
-                <p><span className="text-xs text-[var(--muted)]">{tt.consensusLabel}　</span><span className="text-sm text-[var(--mist)]">{debate.synthesis.consensus}</span></p>
-                <p><span className="text-xs text-[var(--muted)]">{tt.divergenceLabel}　</span><span className="text-sm text-[var(--mist)]">{debate.synthesis.divergence}</span></p>
-                <p className="pt-1"><span className="text-xs" style={{ color: "var(--gold)" }}>{tt.guidanceLabel}　</span><span className="text-[var(--mist)]">{debate.synthesis.guidance}</span></p>
-                {debate.synthesis.selfInquiry?.length > 0 && (
-                  <ul className="list-disc list-inside text-sm text-[var(--mist)] pt-1">
-                    {debate.synthesis.selfInquiry.map((q: string, i: number) => <li key={i}>{q}</li>)}
-                  </ul>
-                )}
-              </div>
-            ) : (
-              <p className="text-[var(--muted)] max-w-md leading-loose text-sm">{debate?.note ?? ""}</p>
+            {debate?.synthesis?.guidance && (
+              <p className="text-lg md:text-xl leading-relaxed max-w-lg text-[var(--gold)] glow">{debate.synthesis.guidance}</p>
             )}
             <button
               onClick={() => setChat(true)}

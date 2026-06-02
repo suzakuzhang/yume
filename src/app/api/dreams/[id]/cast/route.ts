@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { addUsageLog, getDream, upsertReading } from "@/lib/store";
 import { userFromRequest } from "@/lib/access/auth";
-import { seedFromImagery } from "@/lib/casting/seedFromImagery";
+import { castByCoin, coinLabel } from "@/lib/casting/coinMethod";
 import { cast } from "@/lib/casting";
 
 export const dynamic = "force-dynamic";
@@ -14,13 +14,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "未找到" }, { status: 404 });
   }
 
-  const seed = seedFromImagery(dream.imageryElements);
-  const result = cast({ method: "manual", lines: seed.lines, question: dream.question });
+  // 周易铜钱法：三枚铜钱掷六次，随机得卦（与时间、意象无关）。
+  const draw = castByCoin();
+  const result = cast({ method: "coin", lines: draw.lines, question: dream.question });
   if (!result) return NextResponse.json({ error: "起卦失败" }, { status: 500 });
 
   // rule-based reading: the engine already selected the weighted classical texts
   const castPayload = {
-    seed: { lower: seed.lower, upper: seed.upper, rationale: seed.rationale },
+    method: "coin" as const,
+    // the six tosses, 初爻(1) → 上爻(6) — the visible proof of the draw
+    coins: draw.throws.map((th, i) => ({
+      position: i + 1,
+      total: th.total,
+      label: coinLabel(th.total),
+      yang: th.yao === 1,
+      changing: th.changing,
+    })),
     original: {
       name: result.originalHexagram.name,
       fullName: result.originalHexagram.fullName,
