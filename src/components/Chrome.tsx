@@ -54,7 +54,7 @@ export function Chrome({ children }: { children: React.ReactNode }) {
     <>
       <header className="px-6 py-5">
         <nav className="max-w-3xl mx-auto flex items-center gap-7">
-          <a href="/" className="text-base tracking-[0.18em] font-medium">
+          <a href="/" className="serif text-base tracking-[0.18em] font-medium">
             yume<span className="text-[var(--accent)] glow ml-1">{t.brand}</span>
           </a>
           {navItem("/today", t.nav.today)}
@@ -68,7 +68,7 @@ export function Chrome({ children }: { children: React.ReactNode }) {
             </span>
             {loading ? (
               <span className="text-[var(--muted)]">…</span>
-            ) : user ? (
+            ) : user && !user.anon ? (
               <span className="flex items-center gap-3">
                 <span className="text-[var(--muted)]">{user.username}</span>
                 <button onClick={() => logout()} className="text-[var(--muted)] hover:text-[var(--moon)]">
@@ -76,7 +76,7 @@ export function Chrome({ children }: { children: React.ReactNode }) {
                 </button>
               </span>
             ) : (
-              <a href="/login" className="text-[var(--muted)] hover:text-[var(--moon)]">
+              <a href="/diary" className="text-[var(--muted)] hover:text-[var(--moon)]">
                 {t.nav.signin}
               </a>
             )}

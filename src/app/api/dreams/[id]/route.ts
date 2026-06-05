@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { deleteDream, getDream, getReadingByDream, updateDream } from "@/lib/store";
 import { userFromRequest } from "@/lib/access/auth";
+import { deleteTrace } from "@/lib/experiments/sink";
 
 export const dynamic = "force-dynamic";
 
@@ -44,5 +45,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 export async function DELETE(req: Request, { params }: { params: { id: string } }) {
   const r = ownedDream(req, params.id);
   if ("error" in r) return r.error;
-  return NextResponse.json({ ok: deleteDream(r.dream.id) });
+  const ok = deleteDream(r.dream.id);
+  deleteTrace(r.dream.id); // a discarded dream leaves no spans behind
+  return NextResponse.json({ ok });
 }

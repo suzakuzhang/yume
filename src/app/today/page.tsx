@@ -6,13 +6,12 @@ import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { almanac } from "@/lib/almanac";
 import { LEAD_GAZE_KEY } from "@/components/GazeCompass";
-import { IdEntry } from "@/components/IdEntry";
 import type { ElementBaseline } from "@/lib/store/types";
 
 export default function TodayPage() {
   const { t } = useLocale();
   const tt = t.today;
-  const { user, loading, authedFetch } = useAuth();
+  const { user, loading, authedFetch, enterAnon } = useAuth();
   const router = useRouter();
 
   const [imagery, setImagery] = useState<string[]>([]);
@@ -47,6 +46,9 @@ export default function TodayPage() {
     }
     setBusy(true);
     try {
+      // no login gate — a silent anonymous identity is minted on the first dream,
+      // and named (or kept anonymously) only at 拂晓
+      if (!user) await enterAnon();
       // capture the moment's elemental ground note as a reading baseline
       const a = almanac(new Date());
       const elementBaseline: ElementBaseline = {
@@ -81,20 +83,6 @@ export default function TodayPage() {
   }
 
   if (loading) return <p className="veil phase-label text-center py-16">{tt.submitting}</p>;
-
-  // identity is captured right here, at the moment of recording — no bounce to a separate gate
-  if (!user) {
-    return (
-      <div className="veil max-w-sm mx-auto py-10 space-y-6">
-        <div className="text-center space-y-2">
-          <p className="phase-label">{tt.label}</p>
-          <h1 className="text-2xl tracking-[0.08em]">{tt.title}</h1>
-          <p className="text-sm text-[var(--muted)] leading-loose pt-1">{tt.idIntro}</p>
-        </div>
-        <IdEntry />
-      </div>
-    );
-  }
 
   return (
     <div className="veil max-w-xl mx-auto space-y-10">

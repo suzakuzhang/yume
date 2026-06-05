@@ -110,28 +110,28 @@ export default function HomePage() {
             <div className="absolute inset-0 flex flex-col md:flex-row">
               <button
                 onClick={(e) => tapLang("zh", e)}
-                aria-label={pendingLang === "zh" ? "再触一次,入梦" : "选择中文"}
+                aria-label="Choose Chinese"
                 className={`group flex-1 flex flex-col items-center justify-center gap-6 transition-all duration-500 ${
                   pendingLang === "zh" ? "bg-[rgba(179,166,239,0.08)]" : pendingLang ? "opacity-40" : "hover:bg-[rgba(179,166,239,0.05)]"
                 }`}
               >
-                <span className={`text-7xl tracking-[0.1em] glow transition-colors duration-500 ${pendingLang === "zh" ? "text-[var(--moon)]" : "text-[var(--mist)] group-hover:text-[var(--moon)]"}`}>夢</span>
+                <span className={`serif text-7xl tracking-[0.1em] glow transition-colors duration-500 ${pendingLang === "zh" ? "text-[var(--moon)]" : "text-[var(--mist)] group-hover:text-[var(--moon)]"}`}>夢</span>
                 {pendingLang === "zh" ? (
-                  <span className="lang-confirm text-sm tracking-[0.4em] text-[var(--moon)]">轻触入梦</span>
+                  <span className="lang-confirm text-sm tracking-[0.4em] text-[var(--moon)]">Choose Chinese</span>
                 ) : (
                   <span className="text-sm tracking-[0.5em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors duration-500">入梦</span>
                 )}
               </button>
               <button
                 onClick={(e) => tapLang("en", e)}
-                aria-label={pendingLang === "en" ? "tap again to enter" : "choose English"}
+                aria-label="Choose English"
                 className={`group flex-1 flex flex-col items-center justify-center gap-6 border-t border-[var(--border)] md:border-t-0 md:border-l transition-all duration-500 ${
                   pendingLang === "en" ? "bg-[rgba(179,166,239,0.08)]" : pendingLang ? "opacity-40" : "hover:bg-[rgba(179,166,239,0.05)]"
                 }`}
               >
-                <span className={`text-6xl tracking-[0.12em] transition-colors duration-500 ${pendingLang === "en" ? "text-[var(--moon)]" : "text-[var(--mist)] group-hover:text-[var(--moon)]"}`}>dream</span>
+                <span className={`serif text-6xl tracking-[0.12em] transition-colors duration-500 ${pendingLang === "en" ? "text-[var(--moon)]" : "text-[var(--mist)] group-hover:text-[var(--moon)]"}`}>dream</span>
                 {pendingLang === "en" ? (
-                  <span className="lang-confirm text-sm tracking-[0.4em] text-[var(--moon)]">tap to enter</span>
+                  <span className="lang-confirm text-sm tracking-[0.4em] text-[var(--moon)]">Choose English</span>
                 ) : (
                   <span className="text-sm tracking-[0.5em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors duration-500">drift in</span>
                 )}
@@ -159,7 +159,7 @@ export default function HomePage() {
             <h1 className="text-5xl tracking-[0.14em]">
               yume <span className="text-[var(--accent)] glow">{t.brand}</span>
             </h1>
-            <p className="text-2xl md:text-3xl leading-relaxed max-w-2xl text-[var(--mist)]">{inv.opening}</p>
+            <p className="serif text-2xl md:text-3xl leading-relaxed max-w-2xl text-[var(--mist)]">{inv.opening}</p>
             {data && now && (
               <span className="text-base tracking-[0.18em] text-[var(--mist)]">
                 <span className="elem-glow" style={{ color: "var(--element)" }}>
@@ -201,20 +201,20 @@ export default function HomePage() {
             {lead && (() => {
               const li = GAZE_KEYS.indexOf(lead);
               const lg = li >= 0 ? h.compass.gazes[li] : null;
-              return lg?.line ? (
-                <p className="lang-confirm text-base md:text-lg leading-relaxed max-w-md text-[var(--mist)]">{lg.line}</p>
+              return lg?.quote ? (
+                <p className="serif lang-confirm text-base md:text-lg leading-relaxed max-w-md text-[var(--mist)] italic">{lg.quote}</p>
               ) : null;
             })()}
-            <p className="text-2xl md:text-3xl text-[var(--gold)] tracking-[0.18em] glow leading-snug">{inv.maxim}</p>
+            <p className="serif text-2xl md:text-3xl text-[var(--gold)] tracking-[0.18em] glow leading-snug">{inv.maxim}</p>
             <a
-              href="/login"
+              href="/today"
               aria-label={h.enter}
               className="elem-orb text-5xl mt-2 transition-transform duration-500 hover:scale-110"
               style={{ ["--g" as string]: "var(--element)" } as React.CSSProperties}
             >
               🌙
             </a>
-            <a href="/journal" className="text-xs tracking-[0.3em] text-[var(--muted)] hover:text-[var(--moon)]">
+            <a href="/diary" className="text-xs tracking-[0.3em] text-[var(--muted)] hover:text-[var(--moon)]">
               {t.nav.timeline}
             </a>
           </div>

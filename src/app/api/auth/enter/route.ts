@@ -1,27 +1,19 @@
 import { NextResponse } from "next/server";
-import {
-  addUsageLog,
-  consumeInviteCode,
-  createSession,
-  createUser,
-  getUserByUsername,
-  updateUser,
-} from "@/lib/store";
+import { addUsageLog, createSession, createUser, getUserByUsername } from "@/lib/store";
 import { getCapabilities, ROLE_USER } from "@/lib/access/roles";
-import { requireInvite } from "@/lib/access/config";
 
 export const dynamic = "force-dynamic";
 
 const ID_RE = /^[A-Za-z0-9]{1,18}$/;
-const BIRTH_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
- * Lightweight, passwordless entry for the beta: invite code (when required) + a
- * custom id (English/digits, ≤18). First time with an id consumes an invite (if
- * invites are required); returning with the same id just resumes the journal.
+ * Passwordless retrace entry (/diary): type your id to return to your kept dreams.
+ * No invite, no birth date. An existing id resumes its journal; an unknown id just
+ * opens a fresh, empty one. (Dreams are created anonymously and claimed at 拂晓 —
+ * see /api/auth/anon and /api/dreams/[id]/keep.)
  */
 export async function POST(req: Request) {
-  let body: { inviteCode?: string; id?: string; birth?: string };
+  let body: { id?: string };
   try {
     body = await req.json();
   } catch {
@@ -29,58 +21,18 @@ export async function POST(req: Request) {
   }
 
   const id = (body.id ?? "").trim();
-  const inviteCode = (body.inviteCode ?? "").trim();
-  const birth = (body.birth ?? "").trim();
   if (!ID_RE.test(id)) {
     return NextResponse.json({ error: "ID 只能是英文和数字，且不超过 18 位" }, { status: 400 });
   }
-  if (birth && !BIRTH_RE.test(birth)) {
-    return NextResponse.json({ error: "出生日期格式应为 YYYY-MM-DD" }, { status: 400 });
-  }
 
   const existing = getUserByUsername(id);
-  if (existing) {
-    // a returning dreamer may fill in a birth date they hadn't given before
-    if (birth && !existing.birth) updateUser(existing.id, { birth });
-    const session = createSession({
-      userId: existing.id,
-      username: existing.username,
-      role: existing.role,
-      accessType: "enter",
-    });
-    addUsageLog({ action: "enter", role: existing.role, userId: existing.id, detail: "resume" });
-    return NextResponse.json({
-      accessToken: session.token,
-      user: { id: existing.id, username: existing.username, role: existing.role, birth: birth || existing.birth || "" },
-      capabilities: getCapabilities(existing.role),
-      expiresAt: session.expiresAt,
-    });
-  }
-
-  // new id — gate by invite policy
-  const needInvite = requireInvite();
-  let usedCode = "";
-  if (needInvite || inviteCode) {
-    const consumed = consumeInviteCode(inviteCode);
-    if (!consumed) {
-      if (needInvite) return NextResponse.json({ error: "邀请码无效或已用尽" }, { status: 403 });
-    } else {
-      usedCode = consumed.code;
-    }
-  }
-
-  const user = createUser({ username: id, passHash: "", role: ROLE_USER, inviteCodeUsed: usedCode || "beta", birth });
-  const session = createSession({
-    userId: user.id,
-    username: user.username,
-    role: user.role,
-    accessType: "enter",
-  });
-  addUsageLog({ action: "enter", role: user.role, userId: user.id, detail: usedCode ? `邀请码 ${usedCode}` : "公测" });
+  const user = existing ?? createUser({ username: id, passHash: "", role: ROLE_USER, inviteCodeUsed: "diary" });
+  const session = createSession({ userId: user.id, username: user.username, role: user.role, accessType: "enter" });
+  addUsageLog({ action: "enter", role: user.role, userId: user.id, detail: existing ? "resume" : "new" });
 
   return NextResponse.json({
     accessToken: session.token,
-    user: { id: user.id, username: user.username, role: user.role, birth: user.birth || "" },
+    user: { id: user.id, username: user.username, role: user.role },
     capabilities: getCapabilities(user.role),
     expiresAt: session.expiresAt,
   });

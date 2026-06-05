@@ -9,10 +9,12 @@ export interface User {
   role: Role;
   inviteCodeUsed: string;
   createdAt: string;
-  /** the dreamer's birth date (YYYY-MM-DD) → natal 天干地支 / zodiac. "" if unset. */
+  /** the dreamer's birth date (YYYY-MM-DD) → natal 天干地支 / zodiac. "" if unset. (legacy; not used in id-at-end flow) */
   birth?: string;
   /** max dreams this user may record. undefined → DEFAULT_QUOTA. */
   dreamQuota?: number;
+  /** a throwaway identity created silently on first dream; cleared once the dreamer claims a real id at 拂晓. */
+  anon?: boolean;
 }
 
 export interface AccessSession {
@@ -74,6 +76,10 @@ export interface Dream {
   natalBaseline?: ElementBaseline | null;
   /** the gaze the compass landed on today — leads 众声; "" if none drawn. */
   leadGaze: string;
+  /** the dreamer chose to keep this dream in the library (at 拂晓). false/undefined = not kept. */
+  labConsent?: boolean;
+  /** the dreamer's own reflection written at 拂晓. "" if none. */
+  reflection?: string;
   createdAt: string;
 }
 

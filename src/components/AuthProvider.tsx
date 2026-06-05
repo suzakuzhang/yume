@@ -6,7 +6,15 @@ export interface AuthUser {
   id: string;
   username: string;
   role: string;
-  birth?: string;
+  anon?: boolean;
+}
+
+export interface KeepResult {
+  claimed?: boolean;
+  accessToken?: string;
+  user?: AuthUser;
+  dream?: unknown;
+  error?: string;
 }
 
 interface AuthState {
@@ -16,7 +24,12 @@ interface AuthState {
   capabilities: Record<string, boolean>;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string, inviteCode: string) => Promise<void>;
-  enter: (inviteCode: string, id: string, birth?: string) => Promise<void>;
+  /** passwordless retrace: type your id to return to your kept dreams (/diary). */
+  enter: (id: string) => Promise<void>;
+  /** silent anonymous session, created on first dream. */
+  enterAnon: () => Promise<void>;
+  /** keep this dream in the library at 拂晓 — claim an id (optional) + write a reflection. */
+  keep: (dreamId: string, opts?: { id?: string; reflection?: string }) => Promise<KeepResult>;
   logout: () => Promise<void>;
   /** fetch with the access token attached. */
   authedFetch: (input: string, init?: RequestInit) => Promise<Response>;
@@ -96,7 +109,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login: (username, password) => handleAuth("/api/auth/login", { username, password }),
     register: (username, password, inviteCode) =>
       handleAuth("/api/auth/register", { username, password, inviteCode }),
-    enter: (inviteCode, id, birth) => handleAuth("/api/auth/enter", { inviteCode, id, birth: birth ?? "" }),
+    enter: (id) => handleAuth("/api/auth/enter", { id }),
+    enterAnon: () => handleAuth("/api/auth/anon", {}),
+    keep: async (dreamId, opts = {}) => {
+      const res = await authedFetch(`/api/dreams/${dreamId}/keep`, { method: "POST", body: JSON.stringify(opts) });
+      const data: KeepResult = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "保留失败");
+      if (data.accessToken) {
+        localStorage.setItem(TOKEN_KEY, data.accessToken);
+        setToken(data.accessToken);
+      }
+      if (data.user) setUser(data.user);
+      return data;
+    },
     logout: async () => {
       await authedFetch("/api/auth/logout", { method: "POST" }).catch(() => {});
       localStorage.removeItem(TOKEN_KEY);

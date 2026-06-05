@@ -158,11 +158,8 @@ export function GazeCompass({
       <div key={active} className="yume-surface text-center max-w-md min-h-[5rem] space-y-2 px-4">
         {gz && (
           <>
-            <p className="text-base md:text-lg leading-relaxed">
-              <span style={{ color: aColor }}>{gz.name}</span>
-              {gz.line && <span className="text-[var(--mist)]">　{gz.line}</span>}
-            </p>
-            {gz.quote && <p className="text-xs md:text-sm text-[var(--muted)] italic leading-relaxed">{gz.quote}</p>}
+            <p className="text-sm tracking-[0.18em]" style={{ color: aColor }}>{gz.name}</p>
+            {gz.quote && <p className="serif text-base md:text-lg text-[var(--mist)] italic leading-relaxed">{gz.quote}</p>}
           </>
         )}
       </div>

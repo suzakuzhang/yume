@@ -99,6 +99,7 @@ export function createUser(opts: {
   inviteCodeUsed?: string;
   birth?: string;
   dreamQuota?: number;
+  anon?: boolean;
 }): User {
   const data = load();
   const user: User = {
@@ -110,10 +111,40 @@ export function createUser(opts: {
     createdAt: utcNow(),
     birth: opts.birth ?? "",
     dreamQuota: opts.dreamQuota,
+    anon: opts.anon ?? false,
   };
   data.users.push(user);
   save(data);
   return user;
+}
+
+/** A throwaway anonymous account, created silently on first dream (no id, no invite). */
+export function createAnonUser(): User {
+  return createUser({ username: `anon_${randomToken().slice(0, 12)}`, passHash: "", role: "user", inviteCodeUsed: "anon", anon: true });
+}
+
+/** Claim a chosen id onto a user. If the id is free → rename in place (clears anon).
+ *  If the id already belongs to another account → move this user's dreams+readings there,
+ *  delete the throwaway, and return the target. Returns null if newUsername is invalid-empty. */
+export function claimUsername(userId: string, newUsername: string): { user: User; merged: boolean } | null {
+  const data = load();
+  const me = data.users.find((u) => u.id === userId);
+  if (!me || !newUsername) return null;
+  const target = data.users.find((u) => u.username === newUsername && u.id !== userId);
+  if (target) {
+    // merge: hand my dreams + readings to the existing account, then drop me
+    for (const d of data.dreams) if (d.userId === userId) d.userId = target.id;
+    for (const r of data.readings) if (r.userId === userId) r.userId = target.id;
+    const idx = data.users.findIndex((u) => u.id === userId);
+    if (idx !== -1) data.users.splice(idx, 1);
+    for (const [tok, s] of Object.entries(data.sessions)) if (s.userId === userId) delete data.sessions[tok];
+    save(data);
+    return { user: { ...target }, merged: true };
+  }
+  me.username = newUsername;
+  me.anon = false;
+  save(data);
+  return { user: { ...me }, merged: false };
 }
 export function getUserByUsername(username: string): User | null {
   return load().users.find((u) => u.username === username) ?? null;
@@ -353,7 +384,7 @@ export function countDreamsByUser(userId: string): number {
 export function updateDream(
   id: string,
   patch: Partial<
-    Pick<Dream, "question" | "dreamText" | "mood" | "painterlyProse" | "imageUrl" | "imageryElements">
+    Pick<Dream, "question" | "dreamText" | "mood" | "painterlyProse" | "imageUrl" | "imageryElements" | "labConsent" | "reflection">
   >
 ): Dream | null {
   const data = load();

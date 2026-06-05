@@ -8,6 +8,7 @@ import { ElementGlyph } from "@/components/ElementGlyph";
 import { ImageProgress } from "@/components/ImageProgress";
 import { SpiritChat } from "@/components/SpiritChat";
 import { VoicesStarMap } from "@/components/VoicesStarMap";
+import { KeepDream } from "@/components/KeepDream";
 import { WUXING, WESTERN_ELEMENTS } from "@/lib/almanac";
 
 /* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
@@ -183,13 +184,6 @@ export default function DreamDetailPage() {
                   {tt.baselineLabel} · {locale === "zh" ? `${eb.ganzhiDay} · ${eb.wuxing?.cn}` : `☉ ${eb.sun} · ${eb.western?.en}`}
                 </span>
               )}
-              {dream.natalBaseline && (
-                <span style={{ color: "var(--gold)" }}>
-                  {locale === "zh"
-                    ? `命 · ${dream.natalBaseline.ganzhiDay} · ${dream.natalBaseline.wuxing?.cn}`
-                    : `natal · ${dream.natalBaseline.sun} · ${dream.natalBaseline.western?.en}`}
-                </span>
-              )}
             </div>
             {dream.dreamText && <p className="text-[var(--muted)] leading-loose max-w-xl text-sm">{dream.dreamText}</p>}
           </Advance>
@@ -298,6 +292,13 @@ export default function DreamDetailPage() {
             {debate?.synthesis?.guidance && (
               <p className="text-lg md:text-xl leading-relaxed max-w-lg text-[var(--gold)] glow">{debate.synthesis.guidance}</p>
             )}
+            <KeepDream
+              dreamId={id}
+              initiallyKept={!!dream.labConsent}
+              anon={!!user?.anon}
+              username={user?.username ?? ""}
+              color={elemColor}
+            />
             <button
               onClick={() => setChat(true)}
               className="mt-3 flex flex-col items-center gap-2 group"

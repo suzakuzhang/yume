@@ -14,6 +14,7 @@ const zh = {
   brand: "夢",
   langOther: "EN",
   nav: { today: "入夜", timeline: "溯梦", signin: "进入", signout: "退出" },
+  diary: { title: "溯梦", intro: "输入你留下的 ID，找回自己的梦。" },
   foot: "墨 · 星 · 渊 · 入梦之阈",
 
   home: {
@@ -210,6 +211,22 @@ const zh = {
     divergenceLabel: "存异",
     guidanceLabel: "拂晓 · 一句话",
     selfInquiryLabel: "值得自问",
+    keep: {
+      prompt: "把这个梦留进梦的库吗？",
+      promptSub: "留个 ID，日后凭它回溯。",
+      idPh: "给自己一个 ID",
+      keepBtn: "留下",
+      notNow: "暂不",
+      reaskTitle: "要不要留个 ID？",
+      reaskSub: "留下，就能回溯这个梦。",
+      againId: "还是留一个 ID",
+      anonKeep: "匿名入库",
+      discard: "丢掉这个梦",
+      saving: "正在留存…",
+      doneNamed: "已留进梦的库。下次回溯，在原网址后加 /diary，用你的 ID 找回。",
+      doneAnon: "已匿名留进梦的库。",
+      discarded: "这个梦散了。",
+    },
     spirit: {
       enter: "唤灵共话",
       title: "唤灵共话",
@@ -236,6 +253,7 @@ const en = {
   brand: "夢",
   langOther: "中",
   nav: { today: "Nightfall", timeline: "Retrace", signin: "Enter", signout: "Sign out" },
+  diary: { title: "Retrace", intro: "Enter the id you left to find your dreams." },
   foot: "Ink · Star · Depths · the threshold of dreaming",
 
   home: {
@@ -439,6 +457,22 @@ const en = {
     divergenceLabel: "Where they differ",
     guidanceLabel: "Dawn · one line",
     selfInquiryLabel: "To ask yourself",
+    keep: {
+      prompt: "Keep this dream in the library?",
+      promptSub: "Leave an id to retrace it later.",
+      idPh: "give yourself an id",
+      keepBtn: "Keep it",
+      notNow: "Not now",
+      reaskTitle: "Sure you don't want an id?",
+      reaskSub: "Leave one and you can retrace this dream.",
+      againId: "I'll leave an id",
+      anonKeep: "Keep anonymously",
+      discard: "Let it go",
+      saving: "keeping…",
+      doneNamed: "Kept in the library. To retrace, add /diary to the URL and enter your id.",
+      doneAnon: "Kept anonymously in the library.",
+      discarded: "The dream has dispersed.",
+    },
     spirit: {
       enter: "Speak with the spirits",
       title: "Speak with the spirits",
