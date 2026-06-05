@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { addUsageLog, getDream, upsertReading } from "@/lib/store";
 import { userFromRequest } from "@/lib/access/auth";
-import { castByCoin, coinLabel } from "@/lib/casting/coinMethod";
+import { seedFromImagery } from "@/lib/casting/seedFromImagery";
 import { cast } from "@/lib/casting";
 import { leggeFor } from "@/lib/casting/legge";
 import { recordDeterministic } from "@/lib/experiments/sink";
@@ -16,9 +16,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "未找到" }, { status: 404 });
   }
 
-  // 周易铜钱法：三枚铜钱掷六次，随机得卦（与时间、意象无关）。
-  const draw = castByCoin();
-  const result = cast({ method: "coin", lines: draw.lines, question: dream.question });
+  // 梦象起卦：由这个梦的意象推卦（火→离、蛇→巽…），可复现 —— 卦从你的梦里长出来。
+  const seed = seedFromImagery(dream.imageryElements);
+  const result = cast({ method: "manual", lines: seed.lines, question: dream.question });
   if (!result) return NextResponse.json({ error: "起卦失败" }, { status: 500 });
 
   // EN card: attach Legge's (PD) name + judgment per hexagram; null → render falls back to the Chinese 卦辞
@@ -26,17 +26,10 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const og = locale === "en" ? leggeFor(result.originalHexagram.id) : null;
   const cg = locale === "en" && result.changedHexagram ? leggeFor(result.changedHexagram.id) : null;
 
-  // rule-based reading: the engine already selected the weighted classical texts
   const castPayload = {
-    method: "coin" as const,
-    // the six tosses, 初爻(1) → 上爻(6) — the visible proof of the draw
-    coins: draw.throws.map((th, i) => ({
-      position: i + 1,
-      total: th.total,
-      label: coinLabel(th.total),
-      yang: th.yao === 1,
-      changing: th.changing,
-    })),
+    method: "imagery" as const,
+    // why this hexagram: each imagery word → its trigram (火→离, 蛇→巽…)
+    seed: { lower: seed.lower, upper: seed.upper, rationale: seed.rationale, matchedCount: seed.matchedCount },
     original: {
       name: result.originalHexagram.name,
       fullName: result.originalHexagram.fullName,
@@ -58,8 +51,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   recordDeterministic(
     { traceId: dream.id, feature: "cast", role: "gua" },
     {
-      method: "coin",
-      coins: draw.throws.map((th) => th.total),
+      method: "imagery",
+      seed: { lower: seed.lower, upper: seed.upper },
+      rationale: seed.rationale,
       hexagram: result.originalHexagram.fullName,
       hexagramId: result.originalHexagram.id,
       changingLines: result.changingLines,

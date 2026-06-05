@@ -85,8 +85,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   // ── open / discuss: each spirit speaks once, seeing the others this round ──
   const brev = group
-    ? "像真人聊天那样说话——口语、简短，1-3句就好，别长篇大论，别像写论文。"
-    : "像真人那样，亲切、简短，2-4句。";
+    ? "你在群聊里，可呼应或质询其他灵，但只说你这一面。立得住、说透，2-4句。"
+    : "贴近、说透，3-5句。";
   const task =
     roundKind === "discuss"
       ? "继续这场讨论：回应或反驳其他灵刚才所说，往前推一步，别重复已说过的话。"
@@ -99,7 +99,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const usr = `${histText ? `对话至今：\n${histText}\n\n` : ""}${others ? `本轮其他灵已开口：\n${others}\n\n` : ""}${task} 请以「${nameOf(s.key)}」的身份开口。`;
     let content: string;
     try {
-      content = await callLLM(sys, usr, { temperature: 0.85, maxTokens: 400, meta: { traceId: dream.id, feature: "spirit", phase: roundKind, role: s.key } });
+      content = await callLLM(sys, usr, { temperature: 0.85, maxTokens: 500, meta: { traceId: dream.id, feature: "spirit", phase: roundKind, role: s.key } });
     } catch {
       content = s.staticLine[locale];
     }

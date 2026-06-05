@@ -240,6 +240,10 @@ export default function DreamDetailPage() {
                   <h3 className="text-lg">{locale === "en" ? cast.original.name_en ?? cast.original.fullName : cast.original.fullName}</h3>
                   <p className="text-[var(--mist)] text-sm">{locale === "en" ? cast.original.judgment_en ?? cast.original.guaCi : cast.original.guaCi}</p>
                   {cast.changed && <p className="text-xs text-[var(--muted)]">{tt.changing} {cast.changingLines?.join(locale === "en" ? ", " : "、")} → {tt.bianGua} {locale === "en" ? cast.changed.name_en ?? cast.changed.fullName : cast.changed.fullName}</p>}
+                  {(() => {
+                    const m = (cast.seed?.rationale ?? []).filter((r: any) => r.trigram).map((r: any) => `${r.term}→${r.trigram}`);
+                    return m.length ? <p className="text-[10px] text-[var(--moon-soft)] tracking-[0.15em] pt-1">{m.join(" · ")}</p> : null;
+                  })()}
                   {cast.coins && <p className="text-[10px] text-[var(--muted)] tracking-[0.2em] pt-1">{tt.coinNote}</p>}
                 </div>
               </div>
