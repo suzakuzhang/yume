@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     const narrative = await callLLM(
       `你是 yume 的纵向之眼。给定一个人按时间排列的若干梦，照见其个体化的轨迹——复现的意象与情绪说明什么、如何流变、阴影与整合的走向。${langNote} 220-380字，第二人称，沉静，不替人决定命运，可呼应"认识你自己"。`,
       `复现意象：${timeline.recurrentImagery.map((t) => `${t.label}×${t.count}`).join("、")}\n复现符号：${timeline.recurrentSymbols.map((s) => `${s.symbol}×${s.count}`).join("、")}\n\n梦序列：\n${seq}`,
-      { temperature: 0.85, maxTokens: 1100 }
+      { temperature: 0.85, maxTokens: 1100, meta: { traceId: `lon_${ctx.user.id}`, feature: "longitudinal", role: null } }
     );
     return NextResponse.json({ timeline, narrative, mode: "generative" });
   } catch {

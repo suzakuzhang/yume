@@ -5,6 +5,7 @@ import {
   createSession,
   createUser,
   getUserByUsername,
+  updateUser,
 } from "@/lib/store";
 import { getCapabilities, ROLE_USER } from "@/lib/access/roles";
 import { requireInvite } from "@/lib/access/config";
@@ -12,6 +13,7 @@ import { requireInvite } from "@/lib/access/config";
 export const dynamic = "force-dynamic";
 
 const ID_RE = /^[A-Za-z0-9]{1,18}$/;
+const BIRTH_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
  * Lightweight, passwordless entry for the beta: invite code (when required) + a
@@ -19,7 +21,7 @@ const ID_RE = /^[A-Za-z0-9]{1,18}$/;
  * invites are required); returning with the same id just resumes the journal.
  */
 export async function POST(req: Request) {
-  let body: { inviteCode?: string; id?: string };
+  let body: { inviteCode?: string; id?: string; birth?: string };
   try {
     body = await req.json();
   } catch {
@@ -28,12 +30,18 @@ export async function POST(req: Request) {
 
   const id = (body.id ?? "").trim();
   const inviteCode = (body.inviteCode ?? "").trim();
+  const birth = (body.birth ?? "").trim();
   if (!ID_RE.test(id)) {
     return NextResponse.json({ error: "ID 只能是英文和数字，且不超过 18 位" }, { status: 400 });
+  }
+  if (birth && !BIRTH_RE.test(birth)) {
+    return NextResponse.json({ error: "出生日期格式应为 YYYY-MM-DD" }, { status: 400 });
   }
 
   const existing = getUserByUsername(id);
   if (existing) {
+    // a returning dreamer may fill in a birth date they hadn't given before
+    if (birth && !existing.birth) updateUser(existing.id, { birth });
     const session = createSession({
       userId: existing.id,
       username: existing.username,
@@ -43,7 +51,7 @@ export async function POST(req: Request) {
     addUsageLog({ action: "enter", role: existing.role, userId: existing.id, detail: "resume" });
     return NextResponse.json({
       accessToken: session.token,
-      user: { id: existing.id, username: existing.username, role: existing.role },
+      user: { id: existing.id, username: existing.username, role: existing.role, birth: birth || existing.birth || "" },
       capabilities: getCapabilities(existing.role),
       expiresAt: session.expiresAt,
     });
@@ -61,7 +69,7 @@ export async function POST(req: Request) {
     }
   }
 
-  const user = createUser({ username: id, passHash: "", role: ROLE_USER, inviteCodeUsed: usedCode || "beta" });
+  const user = createUser({ username: id, passHash: "", role: ROLE_USER, inviteCodeUsed: usedCode || "beta", birth });
   const session = createSession({
     userId: user.id,
     username: user.username,
@@ -72,7 +80,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     accessToken: session.token,
-    user: { id: user.id, username: user.username, role: user.role },
+    user: { id: user.id, username: user.username, role: user.role, birth: user.birth || "" },
     capabilities: getCapabilities(user.role),
     expiresAt: session.expiresAt,
   });

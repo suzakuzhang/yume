@@ -15,7 +15,7 @@ export async function GET(req: Request) {
   }
   return NextResponse.json({
     authed: true,
-    user: { id: ctx.user.id, username: ctx.user.username, role: ctx.user.role },
+    user: { id: ctx.user.id, username: ctx.user.username, role: ctx.user.role, birth: ctx.user.birth ?? "" },
     capabilities: getCapabilities(ctx.user.role),
     expiresAt: ctx.session.expiresAt,
   });

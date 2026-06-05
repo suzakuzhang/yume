@@ -172,6 +172,35 @@ a {
   animation: yume-surface 1.15s var(--ease-dream) both;
 }
 
+/* a soft moonlight ripple emanating from where you chose your tongue */
+@keyframes yume-ripple {
+  0% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  70% {
+    opacity: 0.32;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+.yume-ripple {
+  position: fixed;
+  width: 220vmax;
+  height: 220vmax;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(179, 166, 239, 0.45) 0%, rgba(179, 166, 239, 0.12) 35%, transparent 68%);
+  animation: yume-ripple 0.92s var(--ease-dream) forwards;
+}
+
+/* the chosen tongue settles in, asking to be confirmed */
+.lang-confirm {
+  animation: yume-fade-up 0.8s var(--ease-dream) both;
+}
+
 /* hide scrollbars everywhere — keep the dreamscape full-bleed; scroll still works */
 * {
   scrollbar-width: none;
@@ -325,6 +354,8 @@ textarea {
   .yume-plunge,
   .yume-blackout,
   .yume-surface,
+  .yume-ripple,
+  .lang-confirm,
   .elem-glow,
   .elem-orb {
     animation: none !important;

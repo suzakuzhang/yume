@@ -17,6 +17,9 @@
  *   YUME_MODEL_FALLBACK     optional secondary model on failure
  */
 
+import { recordGenerative } from "@/lib/experiments/sink";
+import type { SpanMeta, TokenUsage } from "@/lib/experiments/types";
+
 export class LLMError extends Error {
   constructor(message: string) {
     super(message);
@@ -32,6 +35,14 @@ export interface CallLLMOptions {
   maxTokens?: number;
   /** Override the model for this call (else YUME_MODEL). */
   model?: string;
+  /** When set, this call is recorded as a generative Span for /lab. */
+  meta?: SpanMeta;
+}
+
+interface RawCompletion {
+  text: string;
+  usage?: TokenUsage;
+  finishReason?: string;
 }
 
 function baseUrl(): string {
@@ -51,7 +62,7 @@ async function chatCompletion(
   systemPrompt: string,
   userPrompt: string,
   opts: { format: LLMFormat; temperature: number; maxTokens: number }
-): Promise<string> {
+): Promise<RawCompletion> {
   const body: Record<string, unknown> = {
     model,
     messages: [
@@ -80,7 +91,11 @@ async function chatCompletion(
   const content = data?.choices?.[0]?.message?.content;
   const text = typeof content === "string" ? content.trim() : "";
   if (!text) throw new LLMError(`aihubmix 返回为空 [${model}]`);
-  return text;
+  const u = data?.usage;
+  const usage: TokenUsage | undefined = u
+    ? { promptTokens: u.prompt_tokens, completionTokens: u.completion_tokens, totalTokens: u.total_tokens }
+    : undefined;
+  return { text, usage, finishReason: data?.choices?.[0]?.finish_reason };
 }
 
 export async function callLLM(
@@ -95,13 +110,29 @@ export async function callLLM(
   };
   const primary = options.model?.trim() || defaultModel();
   const fallback = process.env.YUME_MODEL_FALLBACK?.trim();
+  const meta = options.meta;
+  const params = { temperature: opts.temperature, maxTokens: opts.maxTokens, format: opts.format };
 
+  const t0 = Date.now();
   try {
-    return await chatCompletion(primary, systemPrompt, userPrompt, opts);
+    const r = await chatCompletion(primary, systemPrompt, userPrompt, opts);
+    if (meta)
+      recordGenerative(meta, { model: primary, params, systemPrompt, userPrompt, responseRaw: r.text, finishReason: r.finishReason, usage: r.usage, latencyMs: Date.now() - t0 });
+    return r.text;
   } catch (err) {
     if (fallback && fallback !== primary) {
-      return chatCompletion(fallback, systemPrompt, userPrompt, opts);
+      const t1 = Date.now();
+      try {
+        const r = await chatCompletion(fallback, systemPrompt, userPrompt, opts);
+        if (meta)
+          recordGenerative(meta, { model: fallback, params, systemPrompt, userPrompt, responseRaw: r.text, finishReason: r.finishReason, usage: r.usage, latencyMs: Date.now() - t1, error: `primary ${primary} failed: ${(err as Error).message}` });
+        return r.text;
+      } catch (err2) {
+        if (meta) recordGenerative(meta, { model: fallback, params, systemPrompt, userPrompt, latencyMs: Date.now() - t1, error: (err2 as Error).message });
+        throw err2;
+      }
     }
+    if (meta) recordGenerative(meta, { model: primary, params, systemPrompt, userPrompt, latencyMs: Date.now() - t0, error: (err as Error).message });
     throw err;
   }
 }

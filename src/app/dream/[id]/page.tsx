@@ -7,6 +7,7 @@ import { useLocale } from "@/components/LocaleProvider";
 import { ElementGlyph } from "@/components/ElementGlyph";
 import { ImageProgress } from "@/components/ImageProgress";
 import { SpiritChat } from "@/components/SpiritChat";
+import { VoicesStarMap } from "@/components/VoicesStarMap";
 import { WUXING, WESTERN_ELEMENTS } from "@/lib/almanac";
 
 /* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
@@ -65,17 +66,17 @@ export default function DreamDetailPage() {
     setBusy(true);
     try {
       if (!reading?.cast) {
-        const d = await authedFetch(`/api/dreams/${id}/cast`, { method: "POST" }).then((r) => r.json());
+        const d = await authedFetch(`/api/dreams/${id}/cast?locale=${locale}`, { method: "POST" }).then((r) => r.json());
         if (d.cast) setReading((p: any) => ({ ...(p ?? {}), cast: d.cast }));
       }
       if (!reading?.tarot) {
-        const d = await authedFetch(`/api/dreams/${id}/tarot`, { method: "POST" }).then((r) => r.json());
+        const d = await authedFetch(`/api/dreams/${id}/tarot?locale=${locale}`, { method: "POST" }).then((r) => r.json());
         if (d.tarot) setReading((p: any) => ({ ...(p ?? {}), tarot: d.tarot }));
       }
     } finally {
       setBusy(false);
     }
-  }, [authedFetch, id, reading]);
+  }, [authedFetch, id, locale, reading]);
 
   const runDebate = useCallback(async () => {
     if (reading?.debate) return;
@@ -137,13 +138,8 @@ export default function DreamDetailPage() {
 
   const eb = dream.elementBaseline;
   const step = PHASES[idx];
-  // the gaze the compass drew today leads 众声; the rest follow as 备选
+  // the gaze the compass drew today is the brightest star in 众声; the rest orbit, dim
   const leadGaze: string = dream.leadGaze || "";
-  const orderedViews: any[] = debate?.views
-    ? leadGaze
-      ? [...debate.views].sort((a: any, b: any) => (a.key === leadGaze ? -1 : b.key === leadGaze ? 1 : 0))
-      : debate.views
-    : [];
   const elemKey = locale === "zh" ? eb?.wuxing?.key : eb?.western?.key;
   const elemColor =
     (locale === "zh" ? WUXING[eb?.wuxing?.key ?? ""]?.color : WESTERN_ELEMENTS[eb?.western?.key ?? ""]?.color) ?? "var(--moon)";
@@ -185,6 +181,13 @@ export default function DreamDetailPage() {
               {eb && (
                 <span className="elem-glow" style={{ color: elemColor }}>
                   {tt.baselineLabel} · {locale === "zh" ? `${eb.ganzhiDay} · ${eb.wuxing?.cn}` : `☉ ${eb.sun} · ${eb.western?.en}`}
+                </span>
+              )}
+              {dream.natalBaseline && (
+                <span style={{ color: "var(--gold)" }}>
+                  {locale === "zh"
+                    ? `命 · ${dream.natalBaseline.ganzhiDay} · ${dream.natalBaseline.wuxing?.cn}`
+                    : `natal · ${dream.natalBaseline.sun} · ${dream.natalBaseline.western?.en}`}
                 </span>
               )}
             </div>
@@ -240,9 +243,9 @@ export default function DreamDetailPage() {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <h3 className="text-lg">{cast.original.fullName}</h3>
-                  <p className="text-[var(--mist)] text-sm">{cast.original.guaCi}</p>
-                  {cast.changed && <p className="text-xs text-[var(--muted)]">{tt.changing} {cast.changingLines?.join("、")} → {tt.bianGua} {cast.changed.fullName}</p>}
+                  <h3 className="text-lg">{locale === "en" ? cast.original.name_en ?? cast.original.fullName : cast.original.fullName}</h3>
+                  <p className="text-[var(--mist)] text-sm">{locale === "en" ? cast.original.judgment_en ?? cast.original.guaCi : cast.original.guaCi}</p>
+                  {cast.changed && <p className="text-xs text-[var(--muted)]">{tt.changing} {cast.changingLines?.join(locale === "en" ? ", " : "、")} → {tt.bianGua} {locale === "en" ? cast.changed.name_en ?? cast.changed.fullName : cast.changed.fullName}</p>}
                   {cast.coins && <p className="text-[10px] text-[var(--muted)] tracking-[0.2em] pt-1">{tt.coinNote}</p>}
                 </div>
               </div>
@@ -252,7 +255,7 @@ export default function DreamDetailPage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={tarot.image} alt="" style={{ width: 80, borderRadius: 6, transform: tarot.orientation === "reversed" ? "rotate(180deg)" : "none" }} />
                 <div className="space-y-1">
-                  <p className="text-sm">{tarot.name_zh} <span className="text-xs" style={{ color: "var(--element)" }}>· {tarot.orientation === "upright" ? tt.upright : tt.reversed}</span></p>
+                  <p className="text-sm">{locale === "en" ? tarot.name_en : tarot.name_zh} <span className="text-xs" style={{ color: "var(--element)" }}>· {tarot.orientation === "upright" ? tt.upright : tt.reversed}</span></p>
                   <p className="text-xs text-[var(--muted)] leading-relaxed">{tarot.reading?.core}</p>
                 </div>
               </div>
@@ -270,39 +273,19 @@ export default function DreamDetailPage() {
                 <p className="text-[var(--muted)] text-xs tracking-[0.3em] animate-pulse">{tt.summoning}</p>
               </>
             ) : debate ? (
-              <div className="space-y-2 max-w-lg w-full">
-                {orderedViews.map((v: any, i: number) => {
-                  const lead = !!leadGaze && v.key === leadGaze;
-                  return (
-                    <div key={v.key}>
-                      {!!leadGaze && i === 1 && (
-                        <p className="phase-label text-left pt-2 pb-1 opacity-60">{tt.othersLabel}</p>
-                      )}
-                      <div
-                        className="surface p-3 text-left transition-all"
-                        style={{
-                          borderLeft: `2px solid var(${v.colorVar})`,
-                          ...(lead
-                            ? { boxShadow: `0 0 22px -8px var(${v.colorVar})`, background: `color-mix(in srgb, var(${v.colorVar}) 9%, transparent)` }
-                            : leadGaze
-                            ? { opacity: 0.74 }
-                            : {}),
-                        }}
-                      >
-                        <span className="text-xs flex items-center gap-2" style={{ color: `var(${v.colorVar})` }}>
-                          {locale === "zh" ? v.nameZh : v.nameEn}
-                          {lead && (
-                            <span className="px-1.5 py-0.5 rounded-full text-[10px] tracking-[0.1em]" style={{ border: `1px solid var(${v.colorVar})` }}>
-                              {tt.leadLabel}
-                            </span>
-                          )}
-                        </span>
-                        <p className="text-[var(--mist)] text-sm leading-relaxed">{v.statement || v.stance}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-                {debate.note && <p className="text-xs text-[var(--muted)]">{debate.note}</p>}
+              <div className="w-full flex flex-col items-center gap-3">
+                <VoicesStarMap
+                  views={debate.views}
+                  cast={cast}
+                  tarot={tarot}
+                  imageUrl={dream.imageUrl}
+                  painterly={dream.painterlyProse}
+                  imagery={dream.imageryElements}
+                  leadGaze={leadGaze}
+                  locale={locale}
+                  leadLabel={tt.leadLabel}
+                />
+                {debate.note && <p className="text-xs text-[var(--muted)] max-w-lg text-center">{debate.note}</p>}
               </div>
             ) : null}
           </Advance>

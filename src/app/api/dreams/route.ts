@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { addUsageLog, createDream, getReadingByDream, listDreamsByUser } from "@/lib/store";
+import { addUsageLog, createDream, getReadingByDream, listDreamsByUser, countDreamsByUser, DEFAULT_QUOTA } from "@/lib/store";
 import { userFromRequest } from "@/lib/access/auth";
+import { elementBaselineFor } from "@/lib/almanac";
 
 export const dynamic = "force-dynamic";
 
@@ -39,8 +40,21 @@ export async function POST(req: Request) {
   if (imageryElements.length === 0) {
     return NextResponse.json({ error: "至少给出一个梦境意象" }, { status: 400 });
   }
+
+  // per-user dream capacity
+  const quota = ctx.user.dreamQuota ?? DEFAULT_QUOTA;
+  if (countDreamsByUser(ctx.user.id) >= quota) {
+    return NextResponse.json({ error: `梦记容量已满（上限 ${quota}）。请联系管理员调整。` }, { status: 403 });
+  }
+
   const GAZES = ["freud", "jung", "shuxu", "daoism"];
   const leadGaze = GAZES.includes(String(body.leadGaze)) ? String(body.leadGaze) : "";
+
+  // the dreamer's natal chart (命), from their birth date — beside the day's ground note (运)
+  let natalBaseline = null;
+  if (ctx.user.birth && /^\d{4}-\d{2}-\d{2}$/.test(ctx.user.birth)) {
+    natalBaseline = elementBaselineFor(new Date(`${ctx.user.birth}T12:00:00`));
+  }
 
   const dream = createDream({
     userId: ctx.user.id,
@@ -51,6 +65,7 @@ export async function POST(req: Request) {
     date: body.date,
     leadGaze,
     elementBaseline: body.elementBaseline ?? null,
+    natalBaseline,
   });
   addUsageLog({
     action: "dream_create",

@@ -7,7 +7,10 @@
     "visual_description": "穿着色彩斑斓的衣服，戴着像小丑一样的帽子，手舞足蹈，昂首阔步，站在悬崖边。右手拿着象征权力的权杖，肩上扛着装着经验的包袱，左手持白玫瑰，脚边跟着一只小白狗，远方有山脉，整张牌沐浴在白色阳光下。",
     "summary_meaning": "象征开始、探索、冒险、纯真与潜力，也提醒自由与鲁莽之间只隔着一步。",
     "upright_meaning": "代表新的开始、冒险精神、从零出发、进入新环境，以及愿意相信梦想的勇气。它也常暗示不拘形式的恋爱、艺术气质与对未来的开放态度。",
-    "reversed_meaning": "代表漂泊、鲁莽、轻浮、错失良机、方向感不足，或因为经验不足而走错路。也可能表示缺乏责任感，太凭本能行动。"
+    "reversed_meaning": "代表漂泊、鲁莽、轻浮、错失良机、方向感不足，或因为经验不足而走错路。也可能表示缺乏责任感，太凭本能行动。",
+    "summary_en": "Beginnings, exploration, innocence, a leap of faith — and the single step between freedom and folly.",
+    "upright_en": "A fresh start, spontaneity, setting out from zero, the courage to trust a dream; an open, unbound spirit.",
+    "reversed_en": "Drifting, recklessness, levity, missed chances, or a wrong turn taken out of inexperience and acting on impulse."
   },
   {
     "id": 1,
@@ -17,7 +20,10 @@
     "visual_description": "魔术师右手高举权杖指向天空，左手食指指向地面，像连接天地的桥梁。桌上摆着权杖、圣杯、宝剑和星币，象征四元素。红袍象征热情，白色内衣象征纯洁，腰间盘着蛇，头顶是无限符号，四周盛开着红玫瑰与白百合。",
     "summary_meaning": "象征沟通、启动、创造、调动资源和把想法落地的能力，关键在于意志与清晰度。",
     "upright_meaning": "代表主动性、表达力、执行力和创造力，表示计划顺利推进、资源能够被调动、梦想有机会落地，也常暗示良师益友和清晰的沟通。",
-    "reversed_meaning": "代表失控、误导、优柔寡断、创造力不足，或虽有想法却无法真正行动。也可能表示方向错误、能量分散，爱情与计划停滞不前。"
+    "reversed_meaning": "代表失控、误导、优柔寡断、创造力不足，或虽有想法却无法真正行动。也可能表示方向错误、能量分散，爱情与计划停滞不前。",
+    "summary_en": "Will, skill, and focused power — gathering what you have to make something real.",
+    "upright_en": "Willpower, resourcefulness, manifestation, as-above-so-below; the moment to act with intent.",
+    "reversed_en": "Manipulation, scattered energy, trickery, or talent left untapped and misdirected."
   },
   {
     "id": 2,
@@ -27,7 +33,10 @@
     "visual_description": "女祭司安静端坐于石凳之上，手中抱着写有 Tora 的卷宗。她身旁是一黑一白两根柱子，象征明暗、是非与理性判断。白色头冠和长裙象征纯洁，身后有绿叶、果实与石榴，裙角露出月亮。",
     "summary_meaning": "象征直觉、静观、洞察、理性判断与神秘知识，代表在安静中等待真正的时机。",
     "upright_meaning": "代表判断力、洞察力、深层智慧、冷静坚持和精神性的理解。它也常象征独立女性、神秘学、学问、静水深流的爱与柏拉图式关系。",
-    "reversed_meaning": "代表无知、神经质、缺乏判断、盲目自大、单相思、挑剔或压抑直觉。也可能暗示身体较弱、精神上不够沉稳。"
+    "reversed_meaning": "代表无知、神经质、缺乏判断、盲目自大、单相思、挑剔或压抑直觉。也可能暗示身体较弱、精神上不够沉稳。",
+    "summary_en": "Intuition, mystery, and inner knowing — the veiled depth beneath the surface.",
+    "upright_en": "Listen inward; the unconscious, secrets ripening, wisdom that does not announce itself.",
+    "reversed_en": "Secrets withheld, intuition ignored, surface chosen over depth, signals not heard."
   },
   {
     "id": 3,
@@ -37,7 +46,10 @@
     "visual_description": "皇后端坐在华丽的靠椅上，身旁有洁白的心形盾牌，里面是醒目的女性符号。长裙上布满果实，身后是森林与流水，前方是金黄色谷物。她头戴繁星桂冠，右手持权杖，整体画面丰盛而温暖。",
     "summary_meaning": "象征母性、丰收、滋养、女性魅力、繁荣和大地般的生命力。",
     "upright_meaning": "代表丰收、繁荣、母爱、婚姻、孕育、艺术才能与感性魅力，也暗示关系能够结果、生活有喜悦、事情逐渐成熟。",
-    "reversed_meaning": "代表欢乐消失、恋爱受挫、收获折损、迷惑、虚荣、任性、浪费，或把太多精力给了外界却忽略了照顾自己。"
+    "reversed_meaning": "代表欢乐消失、恋爱受挫、收获折损、迷惑、虚荣、任性、浪费，或把太多精力给了外界却忽略了照顾自己。",
+    "summary_en": "Abundance, nurture, fertility — creation and sensual growth.",
+    "upright_en": "Creativity flowering, care, plenty, the body and the earth; tending something into being.",
+    "reversed_en": "Creative block, smothering or being smothered, neglect of self, growth stalled."
   },
   {
     "id": 4,
@@ -47,7 +59,10 @@
     "visual_description": "皇帝头戴皇冠，身着红袍，外覆盔甲，端坐在王座上。右手持古埃及十字架，王位上刻着四颗羊头，背景是严峻蜿蜒的山脉，整体充满权威、纪律与阳刚力量。",
     "summary_meaning": "象征秩序、规则、权威、稳定、责任与掌控力，也有高处不胜寒的意味。",
     "upright_meaning": "代表成功、意志力、责任感、领导能力、执行与处理能力，暗示一个值得信赖、能建立结构与稳定局面的人，感情上也可能对应成熟或年长对象。",
-    "reversed_meaning": "代表不成熟、武断、傲慢、固执、滥权、控制欲强，或缺乏真正的自信与稳定感。也可能表示冷酷与权力失衡。"
+    "reversed_meaning": "代表不成熟、武断、傲慢、固执、滥权、控制欲强，或缺乏真正的自信与稳定感。也可能表示冷酷与权力失衡。",
+    "summary_en": "Structure, authority, order — the steadying frame.",
+    "upright_en": "Stability, leadership, boundaries, fatherly authority; building on solid ground.",
+    "reversed_en": "Rigidity, control, domination, or an authority that has gone weak or cold."
   },
   {
     "id": 5,
@@ -57,7 +72,10 @@
     "visual_description": "教宗身穿大红袍，头戴三层皇冠，右手做出祝福手势，左手持十字权杖。面前站着两位信徒，脚边有两把钥匙，象征智慧与神秘之门。整体画面呈现宗教、制度与精神教导的氛围。",
     "summary_meaning": "象征传统、规范、精神教育、心灵指引、道德秩序与群体价值。",
     "upright_meaning": "代表贵人相助、长辈或老师指引、制度与学校、机关团体、仪式、成熟而深情的爱、良缘以及专业人士的帮助。",
-    "reversed_meaning": "代表打破传统、孤立无助、保守固执、依赖、缘分浅薄、失信或过度叛逆。也可能表示不宜贸然听从外界建议。"
+    "reversed_meaning": "代表打破传统、孤立无助、保守固执、依赖、缘分浅薄、失信或过度叛逆。也可能表示不宜贸然听从外界建议。",
+    "summary_en": "Tradition, teaching, shared belief — the inherited path.",
+    "upright_en": "Guidance, mentorship, convention, belonging to something older than yourself.",
+    "reversed_en": "Dogma questioned, rebellion, leaving the orthodox road to find your own."
   },
   {
     "id": 6,
@@ -67,7 +85,10 @@
     "visual_description": "以伊甸园为背景，亚当与夏娃分别站在两侧。夏娃身后是知识之树与蛇，亚当身后是生命之树与火焰，上方是天使 Raphael。两人之间有山，土地肥沃，画面充满纯真、欲望、选择与连接。",
     "summary_meaning": "象征爱情、结合、选择、价值观、关系中的一致性，以及身心灵的协调。",
     "upright_meaning": "代表关系甜蜜、罗曼蒂克爱情、长期稳定、价值观契合、合作与联结，也可能表示面临重要但真诚的选择。",
-    "reversed_meaning": "代表爱情受挫、背信、不稳定、关系期待不一致、错误决定或无法持续的联盟。"
+    "reversed_meaning": "代表爱情受挫、背信、不稳定、关系期待不一致、错误决定或无法持续的联盟。",
+    "summary_en": "Union, choice, values — what you align yourself with.",
+    "upright_en": "Love, harmony, a meaningful choice made from the heart, two things made one.",
+    "reversed_en": "Disharmony, values misaligned, a hard choice dodged, a bond out of tune."
   },
   {
     "id": 7,
@@ -77,7 +98,10 @@
     "visual_description": "战士驾着由黑白狮身人面兽拉动的战车，身后有四根柱子支撑蓝色车篷，头戴八角星冠，手持矛形权杖，车前有翅膀图腾，身后是城市。整张牌充满行动、推进与意志控制的力量。",
     "summary_meaning": "象征意志力、控制、推进、胜利、独立与从选择走向行动的阶段。",
     "upright_meaning": "代表勇往直前、胜利、掌控节奏、野心、斗志与独立，表示事情有机会被推进，依靠的是专注和意志。",
-    "reversed_meaning": "代表失败、鲁莽、争执、失控、危险驾驶、旅行延迟、斗志减弱，或因为方向未对齐而推进困难。"
+    "reversed_meaning": "代表失败、鲁莽、争执、失控、危险驾驶、旅行延迟、斗志减弱，或因为方向未对齐而推进困难。",
+    "summary_en": "Drive, willful victory, direction — momentum reined and aimed.",
+    "upright_en": "Determination, self-command, triumph through focus; holding the reins of opposing forces.",
+    "reversed_en": "Scattered drive, loss of control, force without direction, a stalled charge."
   },
   {
     "id": 8,
@@ -87,7 +111,10 @@
     "visual_description": "一位女子温柔地驯服狮子，头上与腰间都佩戴花环，画面没有粗暴的征服，反而呈现安定、柔和而强大的控制力。",
     "summary_meaning": "象征内在力量、耐心、勇气、自控与柔中带刚的稳定能量。",
     "upright_meaning": "代表外柔内刚、信心、坚强、斗志、全力以赴，以及用温和但坚定的方式平息冲突、恢复健康或维持关系热度。",
-    "reversed_meaning": "代表软弱、怀疑、自大、滥用力量、缺乏耐性，或在爱情与健康上显得不够稳定。"
+    "reversed_meaning": "代表软弱、怀疑、自大、滥用力量、缺乏耐性，或在爱情与健康上显得不够稳定。",
+    "summary_en": "Courage, gentle power, patience — strength that does not need to dominate.",
+    "upright_en": "Inner strength, compassion, mastering instinct with tenderness rather than force.",
+    "reversed_en": "Self-doubt, raw impulse, or force used where patience was the truer strength."
   },
   {
     "id": 9,
@@ -97,7 +124,10 @@
     "visual_description": "隐士站在雪山之巅，身披斗篷，手持提灯，灯中有六角星，另一手握着长杖，整张牌安静、克制、带着独自寻求真理的气息。",
     "summary_meaning": "象征智慧、独处、反思、寻找真理，也暗示主动退一步去看清自己。",
     "upright_meaning": "代表智慧、冷静、深思熟虑、独处内省、向长者求教，适合整理思路、抽离喧闹、寻找更深层答案。",
-    "reversed_meaning": "代表失误、孤独、过度封闭、固执、缺乏交流、对关系或他人产生怀疑，也可能是把自己困在过度思考里。"
+    "reversed_meaning": "代表失误、孤独、过度封闭、固执、缺乏交流、对关系或他人产生怀疑，也可能是把自己困在过度思考里。",
+    "summary_en": "Solitude, inner search, guidance — the lamp carried alone.",
+    "upright_en": "Introspection, withdrawing to find wisdom, the quiet that lets the inner light show.",
+    "reversed_en": "Isolation, loneliness, or avoiding the reflection you need to make."
   },
   {
     "id": 10,
@@ -107,7 +137,10 @@
     "visual_description": "中央是巨大的命运之轮，轮边有象征变化与轮回的存在，四周是四圣兽与四元素的象征。整张牌像宇宙机制在转动，暗示命运和时机的流变。",
     "summary_meaning": "象征轮回、变化、机运、转折与新循环，提醒一切都在流动。",
     "upright_meaning": "代表好的转变、意外惊喜、好运、机会到来、钟情恋情与幸运婚姻，也暗示要把握当下转机。",
-    "reversed_meaning": "代表不幸转变、时机未到、犹豫、失败、未抓住机会，或事情进入短暂但不稳定的循环。"
+    "reversed_meaning": "代表不幸转变、时机未到、犹豫、失败、未抓住机会，或事情进入短暂但不稳定的循环。",
+    "summary_en": "Cycles, turning point, fate — the wheel comes round.",
+    "upright_en": "Change, fortune turning, momentum, a pivot you can ride rather than resist.",
+    "reversed_en": "Resistance to change, a downturn, the sense of being at fate's mercy."
   },
   {
     "id": 11,
@@ -117,7 +150,10 @@
     "visual_description": "正义女神坐得端正，左手持天秤，右手握直立的宝剑，身穿红袍，背景是对称的帷幕。整张牌传达出清晰、平衡与裁断。",
     "summary_meaning": "象征公平、平衡、责任、判断与面对后果。",
     "upright_meaning": "代表公平、合理处理、协调、中立、裁决、诚实与光明正大的态度，提醒回到事实与标准本身。",
-    "reversed_meaning": "代表不公、纷争、契约问题、错误判断、诉讼、偏见、失衡或逃避应承担的责任。"
+    "reversed_meaning": "代表不公、纷争、契约问题、错误判断、诉讼、偏见、失衡或逃避应承担的责任。",
+    "summary_en": "Balance, truth, consequence — cause meeting effect.",
+    "upright_en": "Fairness, accountability, clear judgment, the reckoning of what was set in motion.",
+    "reversed_en": "Imbalance, evasion, unfairness, or dishonesty with yourself about the cost."
   },
   {
     "id": 12,
@@ -127,7 +163,10 @@
     "visual_description": "倒吊人被挂在 T 字形树上，头下脚上，头部有金色光环，衣着红蓝相间，整张牌并不痛苦，反而显得平静而带有顿悟感。",
     "summary_meaning": "象征暂停、等待、换角度、牺牲与重新理解世界。",
     "upright_meaning": "代表接受考验、等待、平静抉择、换一个角度看问题，也可能对应一种有意义的奉献或暂时不推进感情。",
-    "reversed_meaning": "代表挣扎、钻牛角尖、不愿付出、缺乏耐性、不敢做自己，或无回报的牺牲与停滞。"
+    "reversed_meaning": "代表挣扎、钻牛角尖、不愿付出、缺乏耐性、不敢做自己，或无回报的牺牲与停滞。",
+    "summary_en": "Surrender, pause, a new angle — gain through letting go.",
+    "upright_en": "Suspension, release, seeing anew by staying still; a worthwhile, voluntary pause.",
+    "reversed_en": "Stalling, pointless sacrifice, clinging where surrender was the way through."
   },
   {
     "id": 13,
@@ -137,7 +176,10 @@
     "visual_description": "骷髅骑士骑着白马，手持黑旗，旗上有白玫瑰，脚下有不同身份的人物，远方有河流、船只与朝阳。画面并非单纯黑暗，更像旧事物结束与新阶段来临。",
     "summary_meaning": "象征结束、转化、放下与新生，是旧阶段谢幕后的腾挪空间。",
     "upright_meaning": "代表结束、停止、分手、离婚、失败、疾病、意外或旧习终止，也意味着必须让某个阶段彻底结束。",
-    "reversed_meaning": "代表起死回生、康复、重新开始、低迷结束、新开端，也可能表示迟迟不肯放手、沉溺过去。"
+    "reversed_meaning": "代表起死回生、康复、重新开始、低迷结束、新开端，也可能表示迟迟不肯放手、沉溺过去。",
+    "summary_en": "Ending, transformation, release — the old form shed.",
+    "upright_en": "A necessary ending, transition, clearing space; what dies makes room to be reborn.",
+    "reversed_en": "Clinging to the past, change stalled, fear of letting the old self go."
   },
   {
     "id": 14,
@@ -147,7 +189,10 @@
     "visual_description": "一位天使双手倒水于两个圣杯之间，背有双翼，周围有水、花草和温和的光。整张牌呈现调和、过渡与平衡。",
     "summary_meaning": "象征调和、适度、节奏感、自我节制与把对立元素整合成稳定状态。",
     "upright_meaning": "代表交往顺利、平衡、调整、交换条件、平凡中的幸福、心境平和、爱意加深，是一种慢慢整合后的稳定感。",
-    "reversed_meaning": "代表消耗、浪费、失衡、缺乏调整能力、没默契、工作不稳定、合作不顺，或节奏完全乱掉。"
+    "reversed_meaning": "代表消耗、浪费、失衡、缺乏调整能力、没默契、工作不稳定、合作不顺，或节奏完全乱掉。",
+    "summary_en": "Balance, blending, patience — the middle path.",
+    "upright_en": "Moderation, synthesis, healing, mixing opposites into something whole and calm.",
+    "reversed_en": "Excess, imbalance, impatience, aims that pull against each other."
   },
   {
     "id": 15,
@@ -157,7 +202,10 @@
     "visual_description": "魔鬼拥有蝙蝠翅膀、羊角与羊腿，头顶倒五角星，手中火炬向下，两侧人物被锁链束缚，背景阴暗。整张牌充满诱惑、依赖与失控感。",
     "summary_meaning": "象征诱惑、束缚、沉溺、成瘾、物质执迷与自愿承担的枷锁。",
     "upright_meaning": "代表堕落、诱惑、成瘾、病魔、恶意、荒诞生活、贪心势利，或一段让人难以抽离的关系。",
-    "reversed_meaning": "代表摆脱束缚、恢复自由、拒绝诱惑、病痛缓解、斩断情缘，也可能是混乱中试图脱身。"
+    "reversed_meaning": "代表摆脱束缚、恢复自由、拒绝诱惑、病痛缓解、斩断情缘，也可能是混乱中试图脱身。",
+    "summary_en": "Bondage, shadow, attachment — the chain you forget is loose.",
+    "upright_en": "Dependency, temptation, the appetites that bind; naming what holds you.",
+    "reversed_en": "Release, facing the shadow, unclasping the chain and stepping free."
   },
   {
     "id": 16,
@@ -167,7 +215,10 @@
     "visual_description": "闪电击中高塔，皇冠被震落，塔中人物坠下，黑色背景中火花四散，画面剧烈而突兀，像一场无法回避的崩塌。",
     "summary_meaning": "象征剧变、崩塌、真相暴露、破坏与强制性的觉醒，也暗示破后重建。",
     "upright_meaning": "代表致命打击、剧变、急症、纷争、幻灭、突然分离、信念崩溃或旧结构被强行打破。",
-    "reversed_meaning": "代表困境、背水一战、爱情危机、压抑事态、骄傲的代价，或虽然未彻底崩塌，但危机已经存在。"
+    "reversed_meaning": "代表困境、背水一战、爱情危机、压抑事态、骄傲的代价，或虽然未彻底崩塌，但危机已经存在。",
+    "summary_en": "Upheaval, sudden change, revelation — the false tower falls.",
+    "upright_en": "Abrupt disruption, a brittle structure collapsing, a shock that wakes you.",
+    "reversed_en": "Fear of the fall, disaster delayed or softened, a slow erosion instead of a blast."
   },
   {
     "id": 17,
@@ -177,7 +228,10 @@
     "visual_description": "夜空中有一颗大星与多颗小星，女子跪地倒水，水流向土地与池中。画面宁静、清澈，像在黑暗之后出现的希望之光。",
     "summary_meaning": "象征希望、修复、愿景、信任与重新相信未来。",
     "upright_meaning": "代表愿望达成、前途光明、希望、创造力、生活变好、美好恋情、理想对象，也暗示修复正在发生。",
-    "reversed_meaning": "代表挫折、事与愿违、不乐观、缺乏想象力、异想天开、秘密恋情、希望感减弱。"
+    "reversed_meaning": "代表挫折、事与愿违、不乐观、缺乏想象力、异想天开、秘密恋情、希望感减弱。",
+    "summary_en": "Hope, renewal, faith — quiet light after the storm.",
+    "upright_en": "Hope, healing, serenity, guidance returning; you are seen and replenished.",
+    "reversed_en": "Discouragement, faith dimmed, feeling cut off from hope or inspiration."
   },
   {
     "id": 18,
@@ -187,7 +241,10 @@
     "visual_description": "月亮高悬，带着人脸，夜色中有犬吠与朦胧景象，画面充满不确定、潜意识和暗潮般的情绪感。",
     "summary_meaning": "象征潜意识、迷惑、情绪波动、暧昧、想象与不安，也可能带来灵感。",
     "upright_meaning": "代表迷惑、不安、联想、灵感、暧昧、潜意识活跃和需要辨认真相的阶段，事情尚不完全清晰。",
-    "reversed_meaning": "代表迷雾开始散开、部分真相显现、不安减弱、情绪回稳，但也可能是更深层的自欺和误判。"
+    "reversed_meaning": "代表迷雾开始散开、部分真相显现、不安减弱、情绪回稳，但也可能是更深层的自欺和误判。",
+    "summary_en": "Illusion, the unconscious, uncertainty — the half-lit path.",
+    "upright_en": "Dreams, intuition, fear and the unclear road; trust the feel of the dark, not its shapes.",
+    "reversed_en": "Confusion clearing, a hidden truth surfacing, anxiety beginning to lift."
   },
   {
     "id": 19,
@@ -197,7 +254,10 @@
     "visual_description": "金色太阳放射出光芒，下方有四朵向日葵，一名头戴花冠、插着红羽毛的孩童举着旗帜，充满自然、明朗与生命的喜悦。",
     "summary_meaning": "象征生命力、光明、自由、繁荣和纯自然的快乐，是最明亮、最有希望的牌之一。",
     "upright_meaning": "代表精力充沛、自由快乐、工作顺利、飞黄腾达、学业成功、爱情愉悦、婚姻幸福，以及一种被阳光照亮的状态。",
-    "reversed_meaning": "代表活动力减弱、消沉、生活不安、人际关系不好、失恋、离婚或事情发展不够乐观，但通常不是彻底失去希望。"
+    "reversed_meaning": "代表活动力减弱、消沉、生活不安、人际关系不好、失恋、离婚或事情发展不够乐观，但通常不是彻底失去希望。",
+    "summary_en": "Joy, clarity, vitality — open daylight.",
+    "upright_en": "Warmth, success, clarity, wholehearted joy; nothing left in shadow.",
+    "reversed_en": "Optimism dimmed, passing clouds, or a brightness that feels forced."
   },
   {
     "id": 20,
@@ -207,7 +267,10 @@
     "visual_description": "拥有翅膀的天使在云端吹着金色的喇叭，下方的人们在召唤中抬头，像在接受最终审视，也像在迎来精神上的觉醒与重生。",
     "summary_meaning": "象征觉醒、最终审视、重生、复苏和回应召唤，意味着旧包袱被卸下，新的阶段被开启。",
     "upright_meaning": "代表危机解除、恢复健康、事业上升、好消息、事态明朗、重见光明、复苏的爱与审慎决断。",
-    "reversed_meaning": "代表坏消息、失败、延期、无法决定、复苏缓慢、计划不被接受、恋恋不舍的爱，或重新开始后又回到原状。"
+    "reversed_meaning": "代表坏消息、失败、延期、无法决定、复苏缓慢、计划不被接受、恋恋不舍的爱，或重新开始后又回到原状。",
+    "summary_en": "Reckoning, awakening, renewal — the call to rise.",
+    "upright_en": "A summons to rise, honest self-reckoning, rebirth and a clear verdict on the past.",
+    "reversed_en": "Self-doubt, ignoring the call, judging yourself too harshly to move."
   },
   {
     "id": 21,
@@ -217,6 +280,9 @@
     "visual_description": "月桂树围成的圆环中包围着爱与美的女神，周围有象征火、地、风、水四元素的动物。整张牌呈现出整体协调、联结与动态平衡的圆满状态。",
     "summary_meaning": "象征终极幸福、整体完成、人与世界的联结，以及通过积极投入与服务而获得的圆满。",
     "upright_meaning": "代表完成、成功、达成目标、毕生追求、达到标准、完美状态、快乐结束，也对应理想恋情与受人称羡的情侣。",
-    "reversed_meaning": "代表未完成、未获得预期成就、准备不足而失败、进展不顺、精神松弛、状态不佳、无法发挥整体优势，感情上也可能因不够成熟而受挫。"
+    "reversed_meaning": "代表未完成、未获得预期成就、准备不足而失败、进展不顺、精神松弛、状态不佳、无法发挥整体优势，感情上也可能因不够成熟而受挫。",
+    "summary_en": "Completion, wholeness, fulfillment — the cycle made whole.",
+    "upright_en": "Completion, integration, accomplishment; a journey arrives and a circle closes.",
+    "reversed_en": "An unfinished cycle, delay, closure withheld, the last step not yet taken."
   }
 ]

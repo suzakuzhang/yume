@@ -9,6 +9,10 @@ export interface User {
   role: Role;
   inviteCodeUsed: string;
   createdAt: string;
+  /** the dreamer's birth date (YYYY-MM-DD) → natal 天干地支 / zodiac. "" if unset. */
+  birth?: string;
+  /** max dreams this user may record. undefined → DEFAULT_QUOTA. */
+  dreamQuota?: number;
 }
 
 export interface AccessSession {
@@ -66,6 +70,8 @@ export interface Dream {
   painterlyProse: string;
   imageUrl: string;
   elementBaseline: ElementBaseline | null;
+  /** the dreamer's natal 天干地支 / zodiac (from their birth date) — the 命 layer beside the day's 运. */
+  natalBaseline?: ElementBaseline | null;
   /** the gaze the compass landed on today — leads 众声; "" if none drawn. */
   leadGaze: string;
   createdAt: string;

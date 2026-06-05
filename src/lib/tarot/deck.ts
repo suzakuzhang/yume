@@ -9,6 +9,9 @@ export interface TarotCard {
   summary_meaning: string;
   upright_meaning: string;
   reversed_meaning: string;
+  summary_en: string;
+  upright_en: string;
+  reversed_en: string;
 }
 
 export type Orientation = "upright" | "reversed";

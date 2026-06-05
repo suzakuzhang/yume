@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocale } from "@/components/LocaleProvider";
 import { AlmanacChart } from "@/components/AlmanacChart";
 import { useNow } from "@/components/useNow";
-import { GazeCompass } from "@/components/GazeCompass";
+import { GazeCompass, GAZE_KEYS, LEAD_GAZE_KEY } from "@/components/GazeCompass";
 import { almanac } from "@/lib/almanac";
 import { autoTz, clockText, COMMON_TZ } from "@/lib/almanac/time";
 
@@ -18,6 +18,9 @@ export default function HomePage() {
   const [idx, setIdx] = useState(-1);
   const [falling, setFalling] = useState(false);
   const [reduce, setReduce] = useState(false);
+  const [pendingLang, setPendingLang] = useState<"zh" | "en" | null>(null);
+  const [ripple, setRipple] = useState<{ x: number; y: number } | null>(null);
+  const [lead, setLead] = useState("");
   const inited = useRef(false);
   const now = useNow(tz);
   const data = now ? almanac(now) : null;
@@ -43,6 +46,17 @@ export default function HomePage() {
     };
   }, []);
 
+  // by the close, the gaze drawn at the compass is in storage — carry it through
+  useEffect(() => {
+    if (SEQ[idx] !== "close") return;
+    try {
+      const raw = localStorage.getItem(LEAD_GAZE_KEY);
+      if (raw) setLead(JSON.parse(raw).gaze || "");
+    } catch {
+      /* ignore */
+    }
+  }, [idx]);
+
   function go() {
     if (falling) return;
     if (reduce) {
@@ -55,8 +69,23 @@ export default function HomePage() {
       setFalling(false);
     }, 660);
   }
-  function chooseLang(l: "zh" | "en") {
+  // two-tap entry: first tap arms a side (the tongue floats up to be confirmed),
+  // a second tap on the same side commits — a ripple blooms from the touch, then you fall in.
+  // tapping the other side just switches the armed tongue. guards against a mis-touch dropping
+  // you into a language you don't read.
+  function tapLang(l: "zh" | "en", e: React.MouseEvent) {
+    if (falling) return;
+    if (pendingLang !== l) {
+      setPendingLang(l);
+      return;
+    }
     setLocale(l);
+    if (reduce) {
+      go();
+      return;
+    }
+    setRipple({ x: e.clientX, y: e.clientY });
+    window.setTimeout(() => setRipple(null), 950);
     go();
   }
 
@@ -68,6 +97,9 @@ export default function HomePage() {
     <>
       <AlmanacChart data={data} />
       {falling && <div aria-hidden className="fixed inset-0 z-30 yume-blackout" style={{ background: "#07060c" }} />}
+      {ripple && (
+        <div aria-hidden className="yume-ripple" style={{ left: ripple.x, top: ripple.y, zIndex: 40 }} />
+      )}
 
       <div
         key={idx}
@@ -76,13 +108,33 @@ export default function HomePage() {
         {step === "language" && (
           <div className="absolute inset-0">
             <div className="absolute inset-0 flex flex-col md:flex-row">
-              <button onClick={() => chooseLang("zh")} className="group flex-1 flex flex-col items-center justify-center gap-6 transition-colors duration-500 hover:bg-[rgba(179,166,239,0.05)]">
-                <span className="text-7xl tracking-[0.1em] text-[var(--mist)] glow group-hover:text-[var(--moon)] transition-colors duration-500">夢</span>
-                <span className="text-sm tracking-[0.5em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors duration-500">入梦</span>
+              <button
+                onClick={(e) => tapLang("zh", e)}
+                aria-label={pendingLang === "zh" ? "再触一次,入梦" : "选择中文"}
+                className={`group flex-1 flex flex-col items-center justify-center gap-6 transition-all duration-500 ${
+                  pendingLang === "zh" ? "bg-[rgba(179,166,239,0.08)]" : pendingLang ? "opacity-40" : "hover:bg-[rgba(179,166,239,0.05)]"
+                }`}
+              >
+                <span className={`text-7xl tracking-[0.1em] glow transition-colors duration-500 ${pendingLang === "zh" ? "text-[var(--moon)]" : "text-[var(--mist)] group-hover:text-[var(--moon)]"}`}>夢</span>
+                {pendingLang === "zh" ? (
+                  <span className="lang-confirm text-sm tracking-[0.4em] text-[var(--moon)]">轻触入梦</span>
+                ) : (
+                  <span className="text-sm tracking-[0.5em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors duration-500">入梦</span>
+                )}
               </button>
-              <button onClick={() => chooseLang("en")} className="group flex-1 flex flex-col items-center justify-center gap-6 border-t border-[var(--border)] md:border-t-0 md:border-l transition-colors duration-500 hover:bg-[rgba(179,166,239,0.05)]">
-                <span className="text-6xl tracking-[0.12em] text-[var(--mist)] group-hover:text-[var(--moon)] transition-colors duration-500">dream</span>
-                <span className="text-sm tracking-[0.5em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors duration-500">drift in</span>
+              <button
+                onClick={(e) => tapLang("en", e)}
+                aria-label={pendingLang === "en" ? "tap again to enter" : "choose English"}
+                className={`group flex-1 flex flex-col items-center justify-center gap-6 border-t border-[var(--border)] md:border-t-0 md:border-l transition-all duration-500 ${
+                  pendingLang === "en" ? "bg-[rgba(179,166,239,0.08)]" : pendingLang ? "opacity-40" : "hover:bg-[rgba(179,166,239,0.05)]"
+                }`}
+              >
+                <span className={`text-6xl tracking-[0.12em] transition-colors duration-500 ${pendingLang === "en" ? "text-[var(--moon)]" : "text-[var(--mist)] group-hover:text-[var(--moon)]"}`}>dream</span>
+                {pendingLang === "en" ? (
+                  <span className="lang-confirm text-sm tracking-[0.4em] text-[var(--moon)]">tap to enter</span>
+                ) : (
+                  <span className="text-sm tracking-[0.5em] text-[var(--muted)] group-hover:text-[var(--moon)] transition-colors duration-500">drift in</span>
+                )}
               </button>
             </div>
             <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-[var(--muted)] z-10">
@@ -130,6 +182,8 @@ export default function HomePage() {
               elementKey={locale === "zh" ? data?.wuxing.key : data?.western.key}
               elementColor="var(--element)"
               onEnter={go}
+              enterLabel={h.enter}
+              drawLabel={locale === "zh" ? "摇一目光" : "draw a gaze"}
             />
           </div>
         )}
@@ -144,6 +198,13 @@ export default function HomePage() {
                 <span className="text-[var(--mist)]">{"  ☾ "}{clockText(now)}</span>
               </span>
             )}
+            {lead && (() => {
+              const li = GAZE_KEYS.indexOf(lead);
+              const lg = li >= 0 ? h.compass.gazes[li] : null;
+              return lg?.line ? (
+                <p className="lang-confirm text-base md:text-lg leading-relaxed max-w-md text-[var(--mist)]">{lg.line}</p>
+              ) : null;
+            })()}
             <p className="text-2xl md:text-3xl text-[var(--gold)] tracking-[0.18em] glow leading-snug">{inv.maxim}</p>
             <a
               href="/login"

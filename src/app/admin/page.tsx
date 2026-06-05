@@ -14,6 +14,7 @@ export default function AdminPage() {
   const [invites, setInvites] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [logs, setLogs] = useState<any[]>([]);
+  const [cfg, setCfg] = useState<{ requireInvite?: boolean }>({});
   const [newCode, setNewCode] = useState("");
   const [newType, setNewType] = useState<"quota" | "whitelist">("quota");
   const [newMax, setNewMax] = useState(10);
@@ -31,15 +32,26 @@ export default function AdminPage() {
   );
 
   const loadAll = useCallback(async () => {
-    const [i, u, l] = await Promise.all([
+    const [i, u, l, c] = await Promise.all([
       adminFetch("/api/admin/invite-codes").then((r) => r.json()),
       adminFetch("/api/admin/users").then((r) => r.json()),
       adminFetch("/api/admin/logs?limit=100").then((r) => r.json()),
+      adminFetch("/api/admin/config").then((r) => r.json()),
     ]);
     setInvites(i.items ?? []);
     setUsers(u.items ?? []);
     setLogs(l.logs ?? []);
+    setCfg(c.effective ?? {});
   }, [adminFetch]);
+
+  async function setRequireInvite(v: boolean) {
+    const r = await adminFetch("/api/admin/config", { method: "POST", body: JSON.stringify({ requireInvite: v }) }).then((x) => x.json());
+    setCfg(r.effective ?? {});
+  }
+  async function userAction(action: string, id: string, extra: any = {}) {
+    await adminFetch("/api/admin/users", { method: "POST", body: JSON.stringify({ action, id, ...extra }) });
+    loadAll();
+  }
 
   useEffect(() => {
     const saved = typeof window !== "undefined" ? localStorage.getItem(KEY) : null;
@@ -101,6 +113,23 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
+      {/* runtime settings */}
+      <div className="surface p-3 flex items-center gap-3 text-sm">
+        <span className="text-[var(--mist)]">需要激活码</span>
+        <span className="text-xs text-[var(--muted)]">关闭 = 内测,只写 ID 即可进入</span>
+        <button
+          onClick={() => setRequireInvite(!cfg.requireInvite)}
+          className="ml-auto px-3 py-1 rounded-full text-xs tracking-[0.1em] transition-all"
+          style={{
+            border: `1px solid ${cfg.requireInvite ? "var(--moon)" : "var(--border)"}`,
+            color: cfg.requireInvite ? "var(--moon)" : "var(--muted)",
+            boxShadow: cfg.requireInvite ? "0 0 14px -6px var(--moon)" : "none",
+          }}
+        >
+          {cfg.requireInvite ? "开 · 需要激活码" : "关 · 公开内测"}
+        </button>
+      </div>
+
       <div className="flex gap-4">
         {(["invites", "users", "logs"] as const).map((t) => (
           <button
@@ -144,9 +173,35 @@ export default function AdminPage() {
       {tab === "users" && (
         <ul className="space-y-2 text-sm">
           {users.map((u) => (
-            <li key={u.id} className="surface p-3 flex items-center gap-3">
+            <li key={u.id} className="surface p-3 flex flex-wrap items-center gap-x-3 gap-y-2">
               <span className="text-[var(--mist)]">{u.username}</span>
-              <span className="text-xs text-[var(--muted)]">{u.role} · {u.inviteCodeUsed} · {u.createdAt.slice(0, 10)}</span>
+              <span className="text-xs text-[var(--muted)]">
+                {u.role} · {u.createdAt.slice(0, 10)}
+                {u.birth ? ` · 生 ${u.birth}` : ""}
+              </span>
+              <span className="text-xs text-[var(--muted)]">梦 {u.dreamCount}/{u.dreamQuota}</span>
+              <span className="ml-auto flex items-center gap-2">
+                <label className="text-xs text-[var(--muted)] flex items-center gap-1">
+                  容量
+                  <input
+                    type="number"
+                    defaultValue={u.dreamQuota}
+                    onBlur={(e) => {
+                      const v = Math.max(0, Math.floor(Number(e.target.value) || 0));
+                      if (v !== u.dreamQuota) userAction("update", u.id, { dreamQuota: v });
+                    }}
+                    className="w-16 px-2 py-1 rounded bg-[var(--surface)] border border-[var(--border)]"
+                  />
+                </label>
+                <button
+                  onClick={() => {
+                    if (confirm(`删除用户 ${u.username} 及其全部梦境数据？此操作不可撤销。`)) userAction("delete", u.id);
+                  }}
+                  className="text-xs text-[#e08aa0] hover:opacity-80"
+                >
+                  删除
+                </button>
+              </span>
             </li>
           ))}
           {users.length === 0 && <li className="text-[var(--muted)] text-sm">暂无用户</li>}

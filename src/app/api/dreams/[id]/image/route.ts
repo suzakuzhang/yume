@@ -24,6 +24,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     dreamText: dream.dreamText,
     element,
     locale,
+    lens: dream.leadGaze,
+    meta: { traceId: dream.id, feature: "painterly", phase: "凝象", role: dream.leadGaze || null },
   });
   const imageUrl = await generateImage(buildImagePrompt(dream.imageryElements, element), modelOverride);
 

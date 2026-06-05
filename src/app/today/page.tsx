@@ -6,6 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useLocale } from "@/components/LocaleProvider";
 import { almanac } from "@/lib/almanac";
 import { LEAD_GAZE_KEY } from "@/components/GazeCompass";
+import { IdEntry } from "@/components/IdEntry";
 import type { ElementBaseline } from "@/lib/store/types";
 
 export default function TodayPage() {
@@ -81,17 +82,16 @@ export default function TodayPage() {
 
   if (loading) return <p className="veil phase-label text-center py-16">{tt.submitting}</p>;
 
+  // identity is captured right here, at the moment of recording — no bounce to a separate gate
   if (!user) {
     return (
-      <div className="veil text-center py-12 space-y-3">
-        <p className="phase-label">{tt.label}</p>
-        <p className="text-[var(--muted)]">
-          {tt.mustLoginPre}{" "}
-          <a href="/login" className="text-[var(--accent)]">
-            {tt.mustLoginLink}
-          </a>
-          {tt.mustLoginPost}
-        </p>
+      <div className="veil max-w-sm mx-auto py-10 space-y-6">
+        <div className="text-center space-y-2">
+          <p className="phase-label">{tt.label}</p>
+          <h1 className="text-2xl tracking-[0.08em]">{tt.title}</h1>
+          <p className="text-sm text-[var(--muted)] leading-loose pt-1">{tt.idIntro}</p>
+        </div>
+        <IdEntry />
       </div>
     );
   }

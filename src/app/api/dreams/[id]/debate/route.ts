@@ -25,6 +25,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     tarot: (reading?.tarot as never) ?? null,
     baseline: (dream.elementBaseline as never) ?? null,
     locale,
+    traceId: dream.id,
   });
 
   upsertReading({ dreamId: dream.id, userId: ctx.user.id, debate });

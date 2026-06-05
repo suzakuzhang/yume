@@ -27,6 +27,11 @@ export * from "./types";
 const DATA_DIR = process.env.DATA_DIR?.trim() || path.join(process.cwd(), "data");
 const DATA_FILE = path.join(DATA_DIR, "yume_data.json");
 
+export interface RuntimeConfig {
+  /** admin override for invite gating; undefined → fall back to env YUME_REQUIRE_INVITE. */
+  requireInvite?: boolean;
+}
+
 interface DataStore {
   users: User[];
   sessions: Record<string, AccessSession>;
@@ -34,6 +39,7 @@ interface DataStore {
   usageLogs: UsageLog[];
   dreams: Dream[];
   readings: Reading[];
+  config: RuntimeConfig;
 }
 
 const EMPTY: DataStore = {
@@ -43,7 +49,11 @@ const EMPTY: DataStore = {
   usageLogs: [],
   dreams: [],
   readings: [],
+  config: {},
 };
+
+/** default per-user dream capacity when none is set on the account. */
+export const DEFAULT_QUOTA = 100;
 
 // Cached on globalThis to survive Next.js dev hot-reload.
 const g = globalThis as unknown as { __yumeStore?: DataStore };
@@ -87,6 +97,8 @@ export function createUser(opts: {
   passHash: string;
   role?: Role;
   inviteCodeUsed?: string;
+  birth?: string;
+  dreamQuota?: number;
 }): User {
   const data = load();
   const user: User = {
@@ -96,6 +108,8 @@ export function createUser(opts: {
     role: opts.role ?? "user",
     inviteCodeUsed: opts.inviteCodeUsed ?? "",
     createdAt: utcNow(),
+    birth: opts.birth ?? "",
+    dreamQuota: opts.dreamQuota,
   };
   data.users.push(user);
   save(data);
@@ -109,6 +123,42 @@ export function getUserById(id: string): User | null {
 }
 export function listUsers(): User[] {
   return load().users.slice().sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+/** Patch mutable account fields (birth date, dream quota). */
+export function updateUser(id: string, patch: { birth?: string; dreamQuota?: number }): User | null {
+  const data = load();
+  const u = data.users.find((x) => x.id === id);
+  if (!u) return null;
+  if (patch.birth !== undefined) u.birth = patch.birth;
+  if (patch.dreamQuota !== undefined) u.dreamQuota = patch.dreamQuota;
+  save(data);
+  return { ...u };
+}
+/** Hard-delete a user and cascade: their dreams, readings, and sessions. */
+export function deleteUser(id: string): boolean {
+  const data = load();
+  const idx = data.users.findIndex((u) => u.id === id);
+  if (idx === -1) return false;
+  data.users.splice(idx, 1);
+  const dreamIds = new Set(data.dreams.filter((d) => d.userId === id).map((d) => d.id));
+  data.dreams = data.dreams.filter((d) => d.userId !== id);
+  data.readings = data.readings.filter((r) => r.userId !== id && !dreamIds.has(r.dreamId));
+  for (const [tok, s] of Object.entries(data.sessions)) {
+    if (s.userId === id) delete data.sessions[tok];
+  }
+  save(data);
+  return true;
+}
+
+// ── Runtime config ───────────────────────────────────
+export function getConfig(): RuntimeConfig {
+  return { ...load().config };
+}
+export function setConfig(patch: RuntimeConfig): RuntimeConfig {
+  const data = load();
+  data.config = { ...data.config, ...patch };
+  save(data);
+  return { ...data.config };
 }
 
 // ── Sessions ─────────────────────────────────────────
@@ -265,6 +315,7 @@ export function createDream(opts: {
   mood?: string;
   leadGaze?: string;
   elementBaseline?: import("./types").ElementBaseline | null;
+  natalBaseline?: import("./types").ElementBaseline | null;
 }): Dream {
   const data = load();
   const dream: Dream = {
@@ -278,6 +329,7 @@ export function createDream(opts: {
     painterlyProse: "",
     imageUrl: "",
     elementBaseline: opts.elementBaseline ?? null,
+    natalBaseline: opts.natalBaseline ?? null,
     leadGaze: opts.leadGaze ?? "",
     createdAt: utcNow(),
   };
@@ -293,6 +345,10 @@ export function listDreamsByUser(userId: string, limit = 100, offset = 0): Dream
     .dreams.filter((d) => d.userId === userId)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return all.slice(offset, offset + limit);
+}
+/** How many dreams a user has recorded — for quota checks. */
+export function countDreamsByUser(userId: string): number {
+  return load().dreams.filter((d) => d.userId === userId).length;
 }
 export function updateDream(
   id: string,

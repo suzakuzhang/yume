@@ -68,7 +68,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const concUsr = `这个梦：\n${lines}\n\n对话：\n${histText}`;
     let content = fallback;
     try {
-      content = await callLLM(concSys, concUsr, { temperature: 0.7, maxTokens: 400 });
+      content = await callLLM(concSys, concUsr, { temperature: 0.7, maxTokens: 400, meta: { traceId: dream.id, feature: "spirit", phase: "final", role: "_conclusion" } });
     } catch {
       /* keep fallback */
     }
@@ -99,7 +99,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const usr = `${histText ? `对话至今：\n${histText}\n\n` : ""}${others ? `本轮其他灵已开口：\n${others}\n\n` : ""}${task} 请以「${nameOf(s.key)}」的身份开口。`;
     let content: string;
     try {
-      content = await callLLM(sys, usr, { temperature: 0.85, maxTokens: 400 });
+      content = await callLLM(sys, usr, { temperature: 0.85, maxTokens: 400, meta: { traceId: dream.id, feature: "spirit", phase: roundKind, role: s.key } });
     } catch {
       content = s.staticLine[locale];
     }

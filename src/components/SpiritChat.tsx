@@ -126,6 +126,7 @@ export function SpiritChat({ dreamId, onClose }: { dreamId: string; onClose: () 
       {!started ? (
         <div className="flex-1 overflow-y-auto flex flex-col items-center justify-center gap-6 px-6 py-8 text-center">
           <p className="text-[var(--mist)] max-w-sm leading-relaxed">{s.intro}</p>
+          {/* 六灵 — tag chips; picking one lights its star and reveals its face */}
           <div className="flex flex-wrap justify-center gap-3 max-w-md">
             {SPIRITS.map((sp) => {
               const on = picked.includes(sp.key);
@@ -134,14 +135,30 @@ export function SpiritChat({ dreamId, onClose }: { dreamId: string; onClose: () 
                 <button
                   key={sp.key}
                   onClick={() => toggle(sp.key)}
-                  className="px-4 py-2 rounded-full text-sm tracking-[0.12em] transition-all duration-300"
+                  aria-pressed={on}
+                  aria-label={nameOf(sp)}
+                  className="flex items-center gap-2 rounded-full text-sm tracking-[0.12em] transition-all duration-300"
                   style={{
+                    padding: on ? "4px 14px 4px 4px" : "8px 16px",
                     border: `1px solid ${on ? c : "var(--border)"}`,
                     color: on ? "#fff" : "var(--muted)",
-                    background: on ? `color-mix(in srgb, ${c} 32%, transparent)` : "transparent",
-                    boxShadow: on ? `0 0 14px -4px ${c}` : "none",
+                    background: on ? `color-mix(in srgb, ${c} 26%, transparent)` : "transparent",
+                    boxShadow: on ? `0 0 16px -4px ${c}` : "none",
                   }}
                 >
+                  {on && (
+                    <span
+                      className="inline-flex items-center justify-center rounded-full overflow-hidden shrink-0"
+                      style={{ width: 28, height: 28, border: `1px solid ${c}`, boxShadow: `0 0 10px -3px ${c}`, background: `radial-gradient(circle at 50% 35%, color-mix(in srgb, ${c} 32%, transparent), transparent)` }}
+                    >
+                      {sp.portrait ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={sp.portrait} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                      ) : (
+                        <span style={{ color: c, fontSize: 14, lineHeight: 1 }}>✦</span>
+                      )}
+                    </span>
+                  )}
                   {nameOf(sp)}
                 </button>
               );

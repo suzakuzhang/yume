@@ -230,3 +230,22 @@ export function almanac(date: Date): Almanac {
     isoDate: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`,
   };
 }
+
+/**
+ * Flatten an almanac reading into the persisted ElementBaseline shape. Used both
+ * for the day's ground note (运) and, from a birth date, the dreamer's natal chart
+ * (命). Note: with only a birth date the hour pillar is approximate.
+ */
+export function elementBaselineFor(date: Date): import("@/lib/store/types").ElementBaseline {
+  const a = almanac(date);
+  return {
+    ganzhiDay: a.day.text,
+    ganzhiYear: a.year.text,
+    ganzhiHour: a.hour.text,
+    wuxing: { key: a.wuxing.key, cn: a.wuxing.cn, imagery: a.wuxing.imagery },
+    western: { key: a.western.key, en: a.western.en, imagery: a.western.imagery },
+    sun: a.sun.en,
+    four: a.four.cn,
+    capturedAt: new Date().toISOString(),
+  };
+}

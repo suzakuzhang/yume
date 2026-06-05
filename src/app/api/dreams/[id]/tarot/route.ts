@@ -3,6 +3,7 @@ import { addUsageLog, getDream, upsertReading } from "@/lib/store";
 import { userFromRequest } from "@/lib/access/auth";
 import { drawCard } from "@/lib/tarot/deck";
 import { buildTarotReading } from "@/lib/tarot/reading";
+import { recordDeterministic } from "@/lib/experiments/sink";
 
 export const dynamic = "force-dynamic";
 
@@ -14,11 +15,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: "未找到" }, { status: 404 });
   }
 
+  const locale = new URL(req.url).searchParams.get("locale") === "en" ? "en" : "zh";
   const { card, orientation } = drawCard();
+  recordDeterministic({ traceId: dream.id, feature: "draw", role: "pai" }, { cardId: card.id, name: card.name_zh, orientation });
   const eb = dream.elementBaseline;
-  const baseline = eb ? `${eb.ganzhiDay} · 五行${eb.wuxing.cn}（${eb.wuxing.imagery}）· ${eb.sun} ${eb.western.en}` : "";
+  const baseline = eb
+    ? locale === "en"
+      ? `☉ ${eb.sun} · ${eb.western.en}`
+      : `${eb.ganzhiDay} · 五行${eb.wuxing.cn}（${eb.wuxing.imagery}）· ${eb.sun} ${eb.western.en}`
+    : "";
 
-  const reading = await buildTarotReading(card, orientation, dream.question, baseline);
+  const reading = await buildTarotReading(card, orientation, dream.question, baseline, locale, {
+    traceId: dream.id,
+    feature: "tarot",
+    phase: "reading",
+    role: "pai",
+  });
 
   const tarotPayload = {
     cardId: card.id,
