@@ -166,14 +166,9 @@ export async function runDebate(input: DebateInput): Promise<DebateResult> {
       { temperature: 0.8, maxTokens: 900, meta: meta("R2_discuss", "moderator") }
     );
 
-    // Round 3 — synthesis
-    const synthesis = await callLLMJson<DebateSynthesis>(
-      `综合四目光的对话，照见做梦者自己(yume 是一面镜子)。${langNote} 仅输出 JSON:{"consensus":求同之处(60-110字),"divergence":存异之处(60-110字),"guidance":给做梦者的一句话建议(40-80字),"selfInquiry":[2-3个值得自问的问题]}。不替人决定命运。`,
-      `立论：\n${openingsTxt}\n\n讨论：\n${discussion}`,
-      { temperature: 0.8, maxTokens: 900, meta: meta("R3_synth", "moderator") }
-    );
-
-    return { mode: "generative", matched, views, discussion, synthesis, generatedAt: new Date().toISOString() };
+    // 拂晓 synthesis is no longer pulled from the debate here — it is a dedicated
+    // call (synthesizeDawn) made after 起卦/抽牌 so it can fold in their full readings.
+    return { mode: "generative", matched, views, discussion, generatedAt: new Date().toISOString() };
   } catch {
     // graceful fallback to static
     if (tid) recordDeterministic({ traceId: tid, feature: "debate", phase: "static", role: null }, { fallback: true, reason: "generative_error" });
@@ -181,5 +176,59 @@ export async function runDebate(input: DebateInput): Promise<DebateResult> {
       staticView(l, ev[l.key], locale, l.key === "shuxu" ? [castLine(input), tarotLine(input)].filter(Boolean).join("；") : "")
     );
     return { mode: "static", matched, views, note: "解读模型暂不可用，先呈现各派象义。", generatedAt: new Date().toISOString() };
+  }
+}
+
+export interface DawnInput {
+  imagery: string[];
+  question?: string;
+  dreamText?: string;
+  mood?: string;
+  baseline?: { ganzhiDay?: string; wuxing?: { cn?: string; imagery?: string } } | null;
+  castReading?: { fullName?: string; guaCi?: string; primaryTexts?: { label: string; content: string }[]; rationaleText?: string; changedFullName?: string } | null;
+  tarotReading?: { name?: string; orientation?: string; core?: string; context?: string; advice?: string } | null;
+  views?: { nameZh: string; statement?: string; stance?: string }[];
+  discussion?: string;
+  locale?: Locale;
+  traceId?: string;
+}
+
+/**
+ * 拂晓 — a DEDICATED synthesis call (not a byproduct of the debate). It is given
+ * the dream's imagery and the *full* readings (the hexagram with its 卦辞 +
+ * line-texts, the tarot card with its reading, and the four gazes' statements +
+ * their 交锋) and writes the closing: where they agree, where they differ, one
+ * line answering what was asked, and questions to sit with. Null without a key.
+ */
+export async function synthesizeDawn(input: DawnInput): Promise<DebateSynthesis | null> {
+  if (!process.env.AIHUBMIX_API_KEY?.trim()) return null;
+  const locale: Locale = input.locale ?? "zh";
+  const langNote = locale === "zh" ? "用中文。" : "Respond in English.";
+  const c = input.castReading;
+  const tr = input.tarotReading;
+  const castTxt = c?.fullName
+    ? `卦：${c.fullName}「${c.guaCi ?? ""}」${c.changedFullName ? `（变${c.changedFullName}）` : ""}${(c.primaryTexts ?? []).map((t) => `\n　·${t.label}：${t.content}`).join("")}${c.rationaleText ? `\n　断：${c.rationaleText}` : ""}`
+    : "";
+  const tarotTxt = tr?.name ? `牌：${tr.name}（${tr.orientation === "reversed" ? "逆位" : "正位"}）${tr.core ?? ""}${tr.context ? ` ${tr.context}` : ""}${tr.advice ? ` ${tr.advice}` : ""}` : "";
+  const viewsTxt = (input.views ?? []).map((v) => `【${v.nameZh}】${v.statement || v.stance || ""}`).join("\n");
+  const body = [
+    `意象：${input.imagery.join("、")}`,
+    input.question ? `所问：${input.question}` : "",
+    input.dreamText ? `梦境：${input.dreamText}` : "",
+    input.mood ? `心绪：${input.mood}` : "",
+    input.baseline?.ganzhiDay ? `今日基音：${input.baseline.ganzhiDay} · ${input.baseline.wuxing?.cn ?? ""}` : "",
+    castTxt,
+    tarotTxt,
+    viewsTxt ? `四目光：\n${viewsTxt}` : "",
+    input.discussion ? `交锋：${input.discussion}` : "",
+  ].filter(Boolean).join("\n");
+  try {
+    return await callLLMJson<DebateSynthesis>(
+      `你是这场读梦的收束之声——拂晓。把梦的意象、卦的解读、牌的解读、四目光的交锋通通收拢，照见做梦者自己（yume 是一面镜子）。${langNote} 仅输出 JSON：{"consensus":四目光与卦牌的求同之处(60-110字),"divergence":存异、张力之处(60-110字),"guidance":正面回应 ta 最初所问、收束全部解读的一句话(40-90字),"selfInquiry":[2-3个值得 ta 带走自问的问题]}。不替人决定命运。`,
+      body,
+      { temperature: 0.8, maxTokens: 1000, meta: input.traceId ? { traceId: input.traceId, feature: "dawn", phase: "synth", role: "moderator" } : undefined }
+    );
+  } catch {
+    return null;
   }
 }

@@ -62,6 +62,7 @@ export default function DreamDetailPage() {
   const cast = reading?.cast;
   const tarot = reading?.tarot;
   const debate = reading?.debate;
+  const synthesis = reading?.synthesis ?? debate?.synthesis;
 
   const runCastTarot = useCallback(async () => {
     setBusy(true);
@@ -84,7 +85,7 @@ export default function DreamDetailPage() {
     setBusy(true);
     try {
       const d = await authedFetch(`/api/dreams/${id}/debate?locale=${locale}`, { method: "POST" }).then((r) => r.json());
-      if (d.debate) setReading((p: any) => ({ ...(p ?? {}), debate: d.debate }));
+      if (d.debate) setReading((p: any) => ({ ...(p ?? {}), debate: d.debate, synthesis: d.synthesis ?? p?.synthesis }));
     } finally {
       setBusy(false);
     }
@@ -245,6 +246,14 @@ export default function DreamDetailPage() {
                     return m.length ? <p className="text-[10px] text-[var(--moon-soft)] tracking-[0.15em] pt-1">{m.join(" · ")}</p> : null;
                   })()}
                   {cast.coins && <p className="text-[10px] text-[var(--muted)] tracking-[0.2em] pt-1">{tt.coinNote}</p>}
+                  {locale === "zh" && (cast.primaryTexts ?? []).length > 0 && (
+                    <div className="pt-2 mt-2 border-t border-[var(--border-soft)] space-y-1">
+                      {cast.primaryTexts.map((tx: any, i: number) => (
+                        <p key={i} className="text-xs text-[var(--mist)] leading-relaxed"><span className="text-[var(--muted)]">{tx.label}　</span>{tx.content}</p>
+                      ))}
+                    </div>
+                  )}
+                  {locale === "zh" && cast.rationaleText && <p className="text-xs text-[var(--muted)] leading-relaxed pt-1">{cast.rationaleText}</p>}
                 </div>
               </div>
             ) : null}
@@ -255,6 +264,8 @@ export default function DreamDetailPage() {
                 <div className="space-y-1">
                   <p className="text-sm">{locale === "en" ? tarot.name_en : tarot.name_zh} <span className="text-xs" style={{ color: "var(--element)" }}>· {tarot.orientation === "upright" ? tt.upright : tt.reversed}</span></p>
                   <p className="text-xs text-[var(--muted)] leading-relaxed">{tarot.reading?.core}</p>
+                  {tarot.reading?.context && <p className="text-xs text-[var(--mist)] leading-relaxed pt-1">{tarot.reading.context}</p>}
+                  {tarot.reading?.advice && <p className="text-xs leading-relaxed pt-1" style={{ color: "var(--gold)" }}>{tarot.reading.advice}</p>}
                 </div>
               </div>
             )}
@@ -283,6 +294,12 @@ export default function DreamDetailPage() {
                   locale={locale}
                   leadLabel={tt.leadLabel}
                 />
+                {debate.discussion && (
+                  <div className="surface p-4 max-w-lg text-left">
+                    <p className="phase-label pb-1">{tt.discussionLabel}</p>
+                    <p className="serif text-sm text-[var(--mist)] leading-relaxed whitespace-pre-line">{debate.discussion}</p>
+                  </div>
+                )}
                 {debate.note && <p className="text-xs text-[var(--muted)] max-w-lg text-center">{debate.note}</p>}
               </div>
             ) : null}
@@ -293,8 +310,26 @@ export default function DreamDetailPage() {
         {step === "dawn" && (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-5 px-6 text-center overflow-y-auto py-12">
             <p className="phase-label">{arc[4]}</p>
-            {debate?.synthesis?.guidance && (
-              <p className="text-lg md:text-xl leading-relaxed max-w-lg text-[var(--gold)] glow">{debate.synthesis.guidance}</p>
+            {synthesis?.guidance && (
+              <p className="serif text-lg md:text-xl leading-relaxed max-w-lg text-[var(--gold)] glow">{synthesis.guidance}</p>
+            )}
+            {synthesis && (synthesis.consensus || synthesis.divergence || synthesis.selfInquiry?.length) && (
+              <div className="surface p-4 max-w-lg text-left space-y-2">
+                {synthesis.consensus && (
+                  <p className="text-sm text-[var(--mist)] leading-relaxed"><span className="text-xs text-[var(--muted)]">{tt.consensusLabel}　</span>{synthesis.consensus}</p>
+                )}
+                {synthesis.divergence && (
+                  <p className="text-sm text-[var(--mist)] leading-relaxed"><span className="text-xs text-[var(--muted)]">{tt.divergenceLabel}　</span>{synthesis.divergence}</p>
+                )}
+                {synthesis.selfInquiry?.length > 0 && (
+                  <ul className="pt-1 space-y-1">
+                    <li className="phase-label">{tt.selfInquiryLabel}</li>
+                    {synthesis.selfInquiry.map((q: string, i: number) => (
+                      <li key={i} className="text-sm text-[var(--mist)] leading-relaxed">· {q}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             )}
             <KeepDream
               dreamId={id}
