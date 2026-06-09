@@ -10,6 +10,7 @@ import { useLocale } from "./LocaleProvider";
 const IMMERSIVE = (path: string) => path === "/" || path.startsWith("/dream/");
 
 const GLOW = { color: "var(--moon)", textShadow: "0 0 10px var(--moon)" } as const;
+const GITHUB_URL = "https://github.com/suzakuzhang";
 
 /** Locale-aware header + footer wrapping page content. */
 export function Chrome({ children }: { children: React.ReactNode }) {
@@ -85,6 +86,20 @@ export function Chrome({ children }: { children: React.ReactNode }) {
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-10">{children}</main>
+
+      <footer className="px-6 pb-8 pt-2">
+        <div className="max-w-3xl mx-auto text-center text-xs text-[var(--muted)] space-y-1">
+          <p>{t.foot}</p>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-block underline underline-offset-4 hover:text-[var(--moon)]"
+          >
+            Designed by Shumin Zhang
+          </a>
+        </div>
+      </footer>
     </>
   );
 }

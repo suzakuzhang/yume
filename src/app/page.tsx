@@ -9,6 +9,7 @@ import { almanac } from "@/lib/almanac";
 import { autoTz, clockText, COMMON_TZ } from "@/lib/almanac/time";
 
 const SEQ = ["language", "threshold", "compass", "close"] as const;
+const GITHUB_URL = "https://github.com/suzakuzhang";
 
 export default function HomePage() {
   const { t, locale, setLocale, chosen, ready } = useLocale();
@@ -137,7 +138,7 @@ export default function HomePage() {
                 )}
               </button>
             </div>
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-[var(--muted)] z-10">
+            <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex items-center gap-2 text-xs text-[var(--muted)] z-10">
               <span className="opacity-60 tracking-[0.2em]">时区 / zone</span>
               <select
                 value={tz}
@@ -219,6 +220,14 @@ export default function HomePage() {
             </a>
           </div>
         )}
+        <a
+          href={GITHUB_URL}
+          target="_blank"
+          rel="noreferrer"
+          className="absolute bottom-5 left-1/2 z-20 -translate-x-1/2 text-xs tracking-[0.18em] text-[var(--muted)] underline underline-offset-4 transition-colors hover:text-[var(--moon)]"
+        >
+          Designed by Shumin Zhang
+        </a>
       </div>
     </>
   );
